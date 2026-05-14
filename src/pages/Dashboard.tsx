@@ -247,18 +247,7 @@ export default function Dashboard({ contracts, reviews, humanDecisions, onNaviga
             </div>
           </div>
 
-          {/* Coming next */}
-          <div className="surface-card p-5">
-            <h3 className="card-title mb-3">Coming next</h3>
-            <div className="space-y-2">
-              {["Word redline export", "DOCX / PDF parsing", "Real LLM integration", "Historical eval set", "Multi-reviewer approvals"].map(s => (
-                <div key={s} className="flex items-center gap-2">
-                  <span className="pill pill-neutral" style={{ fontSize: "10px" }}>Soon</span>
-                  <span className="text-[11px] text-[#566B76]">{s}</span>
-                </div>
-              ))}
-            </div>
-          </div>
+          
         </div>
       </div>
     </div>
