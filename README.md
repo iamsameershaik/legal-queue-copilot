@@ -190,7 +190,6 @@ See the `/docs` folder:
 | `07_HANDOVER_RUNBOOK.md` | How a legal team would adopt this tool |
 | `08_ASSUMPTIONS_LIMITATIONS_AND_NEXT_STEPS.md` | Honest scope and production path |
 | `09_PROMPTS_USED.md` | Prompts used to build this — artefact trail |
-| `10_SUBMISSION_CHECKLIST.md` | Pre-submission verification checklist |
 
 See `/sample-contracts` for the five synthetic contracts used in the demo.
 
