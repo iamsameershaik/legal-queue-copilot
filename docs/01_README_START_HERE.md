@@ -18,7 +18,7 @@
 
 ## Recommended review path
 
-**1. Watch the walkthrough (2.5 min)**
+**1. Watch the walkthrough (5.2 min)**
 The video covers the problem, the live product, and the eval/handover approach.
 
 **2. Open the live demo**
