@@ -1,0 +1,36 @@
+SYNTHETIC SAMPLE CONTRACT — FOR DEMONSTRATION ONLY
+Not legal advice. Not reviewed by counsel. Do not use in real contract review.
+---
+
+PARTNERSHIP NON-DISCLOSURE AND COLLABORATION AGREEMENT
+
+This Agreement is entered into between:
+
+MediaGroup plc, a company incorporated in England and Wales (company number 04512789), with registered office at 88 Broadcast Lane, London, W1A 1AA ("MediaGroup"); and
+
+ACME Limited, a company incorporated in England and Wales ("ACME").
+
+1. PURPOSE
+The parties wish to explore a potential co-marketing and content partnership. In connection with that exploration, each party may disclose confidential information to the other. This Agreement governs the use of that information.
+
+2. CONFIDENTIAL INFORMATION
+Confidential Information means any non-public information disclosed by either party, whether in writing, orally, or by any other means, that is designated as confidential or that a reasonable person would understand to be confidential.
+
+3. CONFIDENTIALITY OBLIGATIONS
+Each party shall hold the other's Confidential Information in confidence and shall not disclose it to any third party without prior written consent.
+
+4. PUBLICITY AND BRAND RIGHTS
+MediaGroup shall have the right to: (a) identify ACME as a MediaGroup partner in MediaGroup's marketing materials, pitch decks, and website; (b) use ACME's name, logo, and trade marks in any MediaGroup publication, press release, or investor communication; and (c) issue press releases announcing the partnership without prior approval from ACME. ACME acknowledges that MediaGroup operates in a time-sensitive media environment and that advance approval is not always practicable.
+
+5. ASSIGNMENT
+MediaGroup may assign this Agreement and all rights hereunder to any MediaGroup group company or to a purchaser of the MediaGroup business without notice to or consent from ACME.
+
+6. TERM
+This Agreement shall be in effect for one year from the date of signing. Upon expiry, all confidentiality obligations shall cease. The parties agree there is no need for obligations to survive beyond the contract period.
+
+7. GOVERNING LAW
+This Agreement is governed by the laws of England and Wales.
+
+Signed:
+MediaGroup plc: ______________________
+ACME Limited: ______________________

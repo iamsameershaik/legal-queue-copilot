@@ -1,0 +1,108 @@
+import { EvalTest } from "../types";
+
+export const defaultEvalTests: EvalTest[] = [
+  {
+    id: "eval-1",
+    title: "Standard Mutual NDA",
+    contractType: "Mutual NDA",
+    scenario:
+      "Standard mutual NDA with UK governing law, 2-year confidentiality term, mutual obligations, capped liability, no broad indemnity, no publicity rights.",
+    expectedRiskLevel: "Green",
+    expectedIssues: [],
+    actualRiskLevel: "Green",
+    detectedIssues: [],
+    passFail: "Pass",
+    notes: "Correctly classified as routine. No false positives. Recommended for batch spot-check.",
+  },
+  {
+    id: "eval-2",
+    title: "NDA with Non-UK Governing Law",
+    contractType: "Mutual NDA",
+    scenario:
+      "Mutual NDA otherwise standard except governing law is California law. No other material deviations.",
+    expectedRiskLevel: "Amber",
+    expectedIssues: ["Governing Law"],
+    actualRiskLevel: "Amber",
+    detectedIssues: ["Governing Law"],
+    passFail: "Pass",
+    notes: "Governing law flag correctly triggered. Redline to England & Wales suggested.",
+  },
+  {
+    id: "eval-3",
+    title: "NDA with Unlimited Liability",
+    contractType: "Mutual NDA",
+    scenario:
+      "NDA with uncapped, unlimited liability on the company side. Governing law UK. All other terms standard.",
+    expectedRiskLevel: "Red",
+    expectedIssues: ["Liability Cap"],
+    actualRiskLevel: "Red",
+    detectedIssues: ["Liability Cap"],
+    passFail: "Pass",
+    notes: "Unlimited liability correctly escalated to Red. Full legal review route triggered.",
+  },
+  {
+    id: "eval-4",
+    title: "NDA Missing Survival Clause",
+    contractType: "Mutual NDA",
+    scenario:
+      "NDA that terminates cleanly but includes no survival clause for confidentiality obligations after expiry.",
+    expectedRiskLevel: "Amber",
+    expectedIssues: ["Confidentiality Term"],
+    actualRiskLevel: "Green",
+    detectedIssues: [],
+    passFail: "Partial",
+    notes: "Absence of a survival clause was not detected — the contract simply omits it rather than stating it does not apply. False negative. Requires semantic understanding or explicit negative pattern matching to catch reliably.",
+  },
+  {
+    id: "eval-5",
+    title: "NDA with Broad Publicity Rights",
+    contractType: "Mutual NDA",
+    scenario:
+      "NDA with a clause granting counterparty unilateral right to use company name and logo in marketing without further consent.",
+    expectedRiskLevel: "Amber",
+    expectedIssues: ["Publicity Rights"],
+    actualRiskLevel: "Amber",
+    detectedIssues: ["Publicity Rights"],
+    passFail: "Pass",
+    notes: "Publicity clause flagged. Mutual consent requirement suggested.",
+  },
+  {
+    id: "eval-6",
+    title: "Standard Low-Value Order Form",
+    contractType: "Customer Order Form",
+    scenario:
+      "Simple SaaS order form. UK governing law, net 30 payment, no auto-renewal, standard data processing, no unusual indemnity.",
+    expectedRiskLevel: "Green",
+    expectedIssues: [],
+    actualRiskLevel: "Green",
+    detectedIssues: [],
+    passFail: "Pass",
+    notes: "Correctly routed Green. No unnecessary flags raised.",
+  },
+  {
+    id: "eval-7",
+    title: "Order Form with Auto-Renewal",
+    contractType: "Customer Order Form",
+    scenario:
+      "SaaS order form with auto-renewal on 14-day notice window and payment terms of net 90 days.",
+    expectedRiskLevel: "Amber",
+    expectedIssues: ["Auto-Renewal", "Payment Terms"],
+    actualRiskLevel: "Amber",
+    detectedIssues: ["Auto-Renewal", "Payment Terms"],
+    passFail: "Partial",
+    notes: "Both issues detected. However, severity of the 14-day notice window was not calibrated as higher risk than a 30-day window — both flagged as Medium. Real-world calibration needed.",
+  },
+  {
+    id: "eval-8",
+    title: "Order Form with Unusual Indemnity",
+    contractType: "Customer Order Form",
+    scenario:
+      "Order form where customer indemnifies supplier with unlimited scope including third-party end-user claims. Also contains unusual real-time audit rights.",
+    expectedRiskLevel: "Red",
+    expectedIssues: ["Indemnity", "Security Obligations"],
+    actualRiskLevel: "Amber",
+    detectedIssues: ["Indemnity"],
+    passFail: "Partial",
+    notes: "Broad indemnity detected correctly. However, the audit rights clause used indirect phrasing ('security assessments') which the current pattern did not match. False negative on Security Obligations. This is the highest-priority pattern to improve.",
+  },
+];

@@ -1,0 +1,44 @@
+SYNTHETIC SAMPLE CONTRACT — FOR DEMONSTRATION ONLY
+Not legal advice. Not reviewed by counsel. Do not use in real contract review.
+---
+
+MUTUAL NON-DISCLOSURE AGREEMENT
+
+This Mutual Non-Disclosure Agreement ("Agreement") is entered into as of the date last signed below between:
+
+ACME Limited, a company incorporated in England and Wales (company number 01234567), whose registered office is at 1 King Street, London, EC2V 8AD ("Company"); and
+
+Supplier Co Ltd, a company incorporated in England and Wales (company number 09876543) ("Counterparty").
+
+1. PURPOSE
+The parties wish to explore a potential commercial relationship and, in connection with that exploration, may disclose to each other certain confidential information. This Agreement sets out the terms on which such information will be shared.
+
+2. DEFINITION OF CONFIDENTIAL INFORMATION
+"Confidential Information" means any information disclosed by either party to the other, either directly or indirectly, in writing, orally or by inspection of tangible objects, that is designated as confidential or that reasonably should be understood to be confidential given the nature of the information and circumstances of disclosure.
+
+3. OBLIGATIONS OF CONFIDENTIALITY
+Each party agrees to: (a) hold the other party's Confidential Information in strict confidence; (b) not disclose such information to any third party without prior written consent; (c) use the Confidential Information solely for evaluating the potential commercial relationship; and (d) protect the Confidential Information using at least the same degree of care it uses to protect its own confidential information, but in no event less than reasonable care.
+
+4. TERM AND SURVIVAL
+This Agreement shall commence on the date of last signature and continue for a period of two (2) years. The obligations of confidentiality shall survive termination of this Agreement for a further period of two (2) years.
+
+5. LIABILITY
+Nothing in this Agreement limits either party's liability for fraud, wilful misconduct, or any other liability that cannot be excluded by law. Each party's aggregate liability under this Agreement shall not exceed £10,000.
+
+6. GOVERNING LAW
+This Agreement is governed by the laws of England and Wales. The courts of England and Wales shall have exclusive jurisdiction to settle any dispute arising out of or in connection with this Agreement.
+
+7. ENTIRE AGREEMENT
+This Agreement constitutes the entire agreement between the parties with respect to the subject matter hereof and supersedes all prior discussions and understandings.
+
+Signed by the parties:
+
+For and on behalf of ACME Limited:
+Name: ______________________
+Title: ______________________
+Date: ______________________
+
+For and on behalf of Supplier Co Ltd:
+Name: ______________________
+Title: ______________________
+Date: ______________________
