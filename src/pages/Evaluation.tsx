@@ -126,7 +126,7 @@ export default function Evaluation({ evalTests }: EvaluationProps) {
 
                 {/* Risk Route — Expected + Actual stacked */}
                 <div className="flex flex-col gap-1.5">
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-1.9">
                     <span className="text-[10px] text-[#566B76] w-[44px] flex-shrink-0">Expected</span>
                     <RiskBadge level={t.expectedRiskLevel} size="sm" />
                   </div>
