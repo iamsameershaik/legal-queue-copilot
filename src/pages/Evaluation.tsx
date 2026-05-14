@@ -89,56 +89,82 @@ export default function Evaluation({ evalTests }: EvaluationProps) {
         </div>
 
         <div className="overflow-x-auto">
-          <div style={{ minWidth: "760px" }}>
-        {/* Table header */}
-        <div
-          className="grid text-[11px] font-semibold text-[#566B76] uppercase tracking-wider px-5 py-2.5"
-          style={{ gridTemplateColumns: "1fr 100px 70px 70px 1fr 70px 70px", borderBottom: "1px solid #131F25" }}
-        >
-          <span>Scenario</span>
-          <span>Type</span>
-          <span>Expected</span>
-          <span>Actual</span>
-          <span>Issues</span>
-          <span>Result</span>
-          <span>Notes</span>
-        </div>
+          <div style={{ minWidth: "680px" }}>
+            {/* Table header */}
+            <div
+              className="grid text-[11px] font-semibold text-[#566B76] uppercase tracking-wider px-5 py-2.5"
+              style={{ gridTemplateColumns: "1fr 96px 110px 1fr 72px 180px", borderBottom: "1px solid #131F25" }}
+            >
+              <span>Scenario</span>
+              <span>Type</span>
+              <span>Risk Route</span>
+              <span>Issues</span>
+              <span>Result</span>
+              <span>Notes</span>
+            </div>
 
-        {evalTests.map((t, i) => (
-          <div
-            key={t.id}
-            className="grid items-start px-5 py-3.5"
-            style={{
-              gridTemplateColumns: "1fr 100px 70px 70px 1fr 70px 70px",
-              borderBottom: i < evalTests.length - 1 ? "1px solid #0F1A1F" : "none",
-            }}
-          >
-            <div className="pr-3">
-              <p className="text-[13px] font-medium text-[#C8D8DF]">{t.title}</p>
-              <p className="text-[11px] text-[#566B76] mt-0.5 leading-relaxed line-clamp-2">{t.scenario}</p>
-            </div>
-            <span className="text-[11px] text-[#8FA3AE] pt-0.5">{t.contractType.replace("Customer Order Form", "Order Form")}</span>
-            <span className="pt-0.5"><RiskBadge level={t.expectedRiskLevel} size="sm" /></span>
-            <span className="pt-0.5">
-              <div className="flex items-center gap-1">
-                <RiskBadge level={t.actualRiskLevel} size="sm" />
-                {t.actualRiskLevel !== t.expectedRiskLevel && <span className="text-[10px] text-[#F5A623]">↕</span>}
+            {evalTests.map((t, i) => (
+              <div
+                key={t.id}
+                className="grid px-5 py-4"
+                style={{
+                  gridTemplateColumns: "1fr 96px 110px 1fr 72px 180px",
+                  borderBottom: i < evalTests.length - 1 ? "1px solid #0F1A1F" : "none",
+                  alignItems: "start",
+                }}
+              >
+                {/* Scenario */}
+                <div className="pr-4">
+                  <p className="text-[13px] font-medium text-[#C8D8DF] leading-snug">{t.title}</p>
+                  <p className="text-[11px] text-[#566B76] mt-1 leading-relaxed line-clamp-2">{t.scenario}</p>
+                </div>
+
+                {/* Type */}
+                <div className="pr-3">
+                  <p className="text-[11px] text-[#8FA3AE] leading-relaxed">{t.contractType.replace("Customer Order Form", "Order Form")}</p>
+                </div>
+
+                {/* Risk Route — Expected + Actual stacked */}
+                <div className="flex flex-col gap-1.5">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[10px] text-[#566B76] w-[44px] flex-shrink-0">Expected</span>
+                    <RiskBadge level={t.expectedRiskLevel} size="sm" />
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[10px] text-[#566B76] w-[44px] flex-shrink-0">Actual</span>
+                    <RiskBadge level={t.actualRiskLevel} size="sm" />
+                    {t.actualRiskLevel !== t.expectedRiskLevel && (
+                      <span className="text-[10px] text-[#F5A623] font-bold">↕</span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Issues */}
+                <div className="pr-4">
+                  <p className="text-[11px] text-[#8FA3AE] leading-relaxed">
+                    {t.expectedIssues.length > 0 ? t.expectedIssues.join(", ") : "None"}
+                  </p>
+                  {t.detectedIssues.length > 0 && (
+                    <p className="text-[11px] text-[#566B76] mt-1 leading-relaxed">
+                      Found: {t.detectedIssues.join(", ")}
+                    </p>
+                  )}
+                </div>
+
+                {/* Result */}
+                <div>
+                  <PassBadge v={t.passFail} />
+                </div>
+
+                {/* Notes */}
+                <p
+                  className={`text-[11px] leading-relaxed ${t.passFail === "Pass" ? "text-[#364F5A]" : "text-[#8FA3AE]"}`}
+                  title={t.notes}
+                >
+                  {t.notes.slice(0, 120)}{t.notes.length > 120 ? "…" : ""}
+                </p>
               </div>
-            </span>
-            <div className="pr-3 pt-0.5">
-              <p className="text-[11px] text-[#8FA3AE]">
-                Expected: {t.expectedIssues.length > 0 ? t.expectedIssues.join(", ") : "None"}
-              </p>
-              <p className="text-[11px] text-[#566B76] mt-0.5">
-                Detected: {t.detectedIssues.length > 0 ? t.detectedIssues.join(", ") : "None"}
-              </p>
-            </div>
-            <span className="pt-0.5"><PassBadge v={t.passFail} /></span>
-            <p className={`text-[10px] leading-relaxed pt-0.5 ${t.passFail === "Pass" ? "text-[#364F5A]" : "text-[#8FA3AE]"}`}>
-              {t.notes.slice(0, 80)}{t.notes.length > 80 ? "…" : ""}
-            </p>
-          </div>
-        ))}
+            ))}
           </div>
         </div>
       </div>
