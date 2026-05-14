@@ -10,7 +10,7 @@
 
 | | |
 |---|---|
-| **Live demo** | _[add Netlify link]_ |
+| **Live demo** | https://clausecompass.netlify.app/ |
 | **GitHub repo** | https://github.com/iamsameershaik/legal-queue-copilot |
 | **Video walkthrough** | _[add Loom/video link — approx. 2.5 minutes]_ |
 
