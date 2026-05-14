@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | **Live demo** | _[add Netlify URL here]_ |
-| **GitHub repo** | _[add GitHub URL here]_ |
+| **GitHub repo** | https://github.com/iamsameershaik/legal-queue-copilot |
 | **Video walkthrough** | _[add Loom URL here — approx. 2.5 minutes]_ |
 
 ---
