@@ -28,7 +28,7 @@
 
 ### 0:20–0:45 — Product thesis
 
-> "Legal Queue Copilot applies a configurable playbook to incoming contracts, routes them to the right review tier, and hands the lawyer a pre-triaged finding list with suggested redlines. The lawyer still approves everything — but they start from a structured brief, not a blank page."
+> "Clause Compass is a Legal Queue Copilot that applies a configurable playbook to incoming contracts, routes them to the right review tier, and hands the lawyer a pre-triaged finding list with suggested redlines. The lawyer still approves everything — but they start from a structured brief, not a blank page."
 
 Navigate to **Command Centre**. Show the queue table. Load demo queue if needed.
 
