@@ -51,11 +51,11 @@ Complete this checklist before final submission.
 
 ## Links — fill in before submission
 
-- [ ] **README.md live demo link** updated → add Netlify URL
-- [ ] **README.md GitHub repo link** updated → add GitHub URL
-- [ ] **README.md video link** updated → add Loom URL
-- [ ] **docs/01_README_START_HERE.md** links updated
-- [ ] **docs/03_LIVE_DEMO_AND_VIDEO_LINKS.md** links updated
+- [x] **README.md live demo link** updated → https://clausecompass.netlify.app/
+- [x] **README.md GitHub repo link** updated → https://github.com/iamsameershaik/legal-queue-copilot
+- [x] **README.md video link** updated → https://drive.google.com/file/d/1glA6a2GmQRi32N1jdMaqJXCDnUl7dNwb/view
+- [x] **docs/01_README_START_HERE.md** links updated
+- [x] **docs/03_LIVE_DEMO_AND_VIDEO_LINKS.md** links updated
 
 ---
 
