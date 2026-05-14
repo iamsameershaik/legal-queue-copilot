@@ -89,80 +89,90 @@ export default function Evaluation({ evalTests }: EvaluationProps) {
         </div>
 
         <div className="overflow-x-auto">
-          <div style={{ minWidth: "680px" }}>
+          <div style={{ minWidth: "1100px" }}>
             {/* Table header */}
             <div
               className="grid text-[11px] font-semibold text-[#566B76] uppercase tracking-wider px-5 py-2.5"
-              style={{ gridTemplateColumns: "1fr 96px 110px 1fr 72px 180px", borderBottom: "1px solid #131F25" }}
+              style={{
+                gridTemplateColumns: "minmax(280px, 2fr) 110px 170px minmax(260px, 1.4fr) 100px minmax(240px, 1.2fr)",
+                columnGap: "28px",
+                borderBottom: "1px solid #131F25",
+              }}
             >
-              <span>Scenario</span>
-              <span>Type</span>
-              <span>Risk Route</span>
-              <span>Issues</span>
-              <span>Result</span>
-              <span>Notes</span>
+              <span className="min-w-0">Scenario</span>
+              <span className="min-w-0">Type</span>
+              <span className="min-w-0">Risk Route</span>
+              <span className="min-w-0">Issues</span>
+              <span className="min-w-0">Result</span>
+              <span className="min-w-0">Notes</span>
             </div>
 
             {evalTests.map((t, i) => (
               <div
                 key={t.id}
-                className="grid px-5 py-4"
+                className="grid px-5 py-6"
                 style={{
-                  gridTemplateColumns: "1fr 96px 110px 1fr 72px 180px",
-                  borderBottom: i < evalTests.length - 1 ? "1px solid #0F1A1F" : "none",
+                  gridTemplateColumns: "minmax(280px, 2fr) 110px 170px minmax(260px, 1.4fr) 100px minmax(240px, 1.2fr)",
+                  columnGap: "28px",
                   alignItems: "start",
+                  borderBottom: i < evalTests.length - 1 ? "1px solid #0F1A1F" : "none",
                 }}
               >
                 {/* Scenario */}
-                <div className="pr-4">
+                <div className="min-w-0">
                   <p className="text-[13px] font-medium text-[#C8D8DF] leading-snug">{t.title}</p>
                   <p className="text-[11px] text-[#566B76] mt-1 leading-relaxed line-clamp-2">{t.scenario}</p>
                 </div>
 
                 {/* Type */}
-                <div className="pr-3">
-                  <p className="text-[11px] text-[#8FA3AE] leading-relaxed">{t.contractType.replace("Customer Order Form", "Order Form")}</p>
+                <div className="min-w-0">
+                  <p className="text-[11px] text-[#8FA3AE] leading-relaxed break-words">
+                    {t.contractType.replace("Customer Order Form", "Order Form")}
+                  </p>
                 </div>
 
-                {/* Risk Route — Expected + Actual stacked */}
-                <div className="flex flex-col gap-1.5">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-[10px] text-[#566B76] w-[44px] flex-shrink-0">Expected</span>
+                {/* Risk Route — Expected + Actual stacked, no stray indicators */}
+                <div className="min-w-0 flex flex-col gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] text-[#566B76] min-w-[52px] flex-shrink-0">Expected</span>
                     <RiskBadge level={t.expectedRiskLevel} size="sm" />
                   </div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-[10px] text-[#566B76] w-[44px] flex-shrink-0">Actual</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] text-[#566B76] min-w-[52px] flex-shrink-0">Actual</span>
                     <RiskBadge level={t.actualRiskLevel} size="sm" />
-                    {t.actualRiskLevel !== t.expectedRiskLevel && (
-                      <span className="text-[10px] text-[#F5A623] font-bold">↕</span>
-                    )}
                   </div>
                 </div>
 
-                {/* Issues */}
-                <div className="pr-4">
-                  <p className="text-[11px] text-[#8FA3AE] leading-relaxed">
-                    {t.expectedIssues.length > 0 ? t.expectedIssues.join(", ") : "None"}
-                  </p>
-                  {t.detectedIssues.length > 0 && (
-                    <p className="text-[11px] text-[#566B76] mt-1 leading-relaxed">
-                      Found: {t.detectedIssues.join(", ")}
+                {/* Issues — always show Expected + Detected as a clean vertical stack */}
+                <div className="min-w-0 flex flex-col gap-1.5">
+                  <div>
+                    <span className="text-[10px] text-[#566B76] block mb-0.5">Expected</span>
+                    <p className="text-[11px] text-[#8FA3AE] leading-relaxed break-words">
+                      {t.expectedIssues.length > 0 ? t.expectedIssues.join(", ") : "None"}
                     </p>
-                  )}
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-[#566B76] block mb-0.5">Detected</span>
+                    <p className="text-[11px] text-[#566B76] leading-relaxed break-words">
+                      {t.detectedIssues.length > 0 ? t.detectedIssues.join(", ") : "None"}
+                    </p>
+                  </div>
                 </div>
 
                 {/* Result */}
-                <div>
+                <div className="min-w-0">
                   <PassBadge v={t.passFail} />
                 </div>
 
                 {/* Notes */}
-                <p
-                  className={`text-[11px] leading-relaxed ${t.passFail === "Pass" ? "text-[#364F5A]" : "text-[#8FA3AE]"}`}
-                  title={t.notes}
-                >
-                  {t.notes.slice(0, 120)}{t.notes.length > 120 ? "…" : ""}
-                </p>
+                <div className="min-w-0">
+                  <p
+                    className={`text-[11px] leading-relaxed line-clamp-3 break-words ${t.passFail === "Pass" ? "text-[#364F5A]" : "text-[#8FA3AE]"}`}
+                    title={t.notes}
+                  >
+                    {t.notes}
+                  </p>
+                </div>
               </div>
             ))}
           </div>
