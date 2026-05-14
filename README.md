@@ -6,7 +6,7 @@ First-pass AI triage for routine commercial contracts.
 
 | | |
 |---|---|
-| **Live demo** | _[add Netlify link]_ |
+| **Live demo** | https://clausecompass.netlify.app/ |
 | **Video walkthrough** | _[add Loom/video link]_ |
 | **GitHub repo** | https://github.com/iamsameershaik/legal-queue-copilot |
 
