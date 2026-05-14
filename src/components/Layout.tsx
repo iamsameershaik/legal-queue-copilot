@@ -1,7 +1,7 @@
 import { useState } from "react";
 import {
   LayoutDashboard, FilePlus, FileText, BookOpen,
-  FlaskConical, ClipboardList, Scale, Menu, X,
+  FlaskConical, ClipboardList, Scale, Menu, X, ChevronsLeft, ChevronsRight,
 } from "lucide-react";
 
 export type Page =
@@ -24,23 +24,25 @@ const NAV_ITEMS: {
   label: string;
   icon: React.ComponentType<{ size?: number; className?: string }>;
 }[] = [
-  { id: "dashboard",    label: "Command Centre", icon: LayoutDashboard },
-  { id: "new-review",   label: "New Review",     icon: FilePlus },
-  { id: "review-results", label: "Review Results", icon: FileText },
-  { id: "playbook",     label: "Playbook",        icon: BookOpen },
-  { id: "evaluation",   label: "Evaluation",      icon: FlaskConical },
-  { id: "activity-log", label: "Handover",        icon: ClipboardList },
+  { id: "dashboard",      label: "Command Centre",  icon: LayoutDashboard },
+  { id: "new-review",     label: "New Review",      icon: FilePlus },
+  { id: "review-results", label: "Review Results",  icon: FileText },
+  { id: "playbook",       label: "Playbook",        icon: BookOpen },
+  { id: "evaluation",     label: "Evaluation",      icon: FlaskConical },
+  { id: "activity-log",   label: "Handover",        icon: ClipboardList },
 ];
 
 export default function Layout({ currentPage, onNavigate, children, reviewResultsAvailable }: LayoutProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
 
   function navigate(page: Page) {
     onNavigate(page);
     setMobileOpen(false);
   }
 
-  const navContent = (
+  /* ── Expanded sidebar content ───────────────────────────────────────── */
+  const expandedNav = (
     <>
       {/* Brand */}
       <div className="px-5 pt-5 pb-4 flex-shrink-0" style={{ borderBottom: "1px solid #1E2D35" }}>
@@ -51,7 +53,7 @@ export default function Layout({ currentPage, onNavigate, children, reviewResult
           >
             <Scale size={13} color="#040D09" strokeWidth={2.5} />
           </div>
-          <div>
+          <div className="min-w-0">
             <p className="text-sm font-semibold text-[#E8EFF2] leading-tight">ClauseCompass</p>
             <p className="text-[11px] text-[#566B76] leading-tight mt-0.5">First-pass legal triage</p>
           </div>
@@ -93,21 +95,86 @@ export default function Layout({ currentPage, onNavigate, children, reviewResult
     </>
   );
 
+  /* ── Collapsed (icon-only) sidebar content ──────────────────────────── */
+  const collapsedNav = (
+    <>
+      {/* Brand icon only */}
+      <div className="py-5 flex-shrink-0 flex justify-center" style={{ borderBottom: "1px solid #1E2D35" }}>
+        <div
+          className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
+          style={{ background: "#16C784" }}
+        >
+          <Scale size={13} color="#040D09" strokeWidth={2.5} />
+        </div>
+      </div>
+
+      {/* Nav — icons only */}
+      <nav className="flex-1 flex flex-col items-center py-3 gap-0.5 overflow-y-auto">
+        {NAV_ITEMS.map(({ id, icon: Icon }) => {
+          const isActive = currentPage === id;
+          const isDisabled = id === "review-results" && !reviewResultsAvailable;
+          return (
+            <button
+              key={id}
+              onClick={() => !isDisabled && navigate(id)}
+              disabled={isDisabled}
+              title={NAV_ITEMS.find(n => n.id === id)?.label}
+              className="w-10 h-10 rounded-lg flex items-center justify-center transition-colors"
+              style={{
+                background: isActive ? "rgba(22,199,132,0.12)" : "transparent",
+                color: isActive ? "#16C784" : "#566B76",
+                opacity: isDisabled ? 0.3 : 1,
+                cursor: isDisabled ? "not-allowed" : "pointer",
+              }}
+            >
+              <Icon size={15} />
+            </button>
+          );
+        })}
+      </nav>
+
+      {/* Footer spacer */}
+      <div className="pb-4 pt-3 flex-shrink-0" style={{ borderTop: "1px solid #1E2D35" }} />
+    </>
+  );
+
   return (
     <div className="flex h-screen overflow-hidden" style={{ background: "#080D10" }}>
-      {/* Desktop sidebar */}
+
+      {/* ── Desktop sidebar ──────────────────────────────────────────────── */}
       <aside
-        className="hidden md:flex flex-shrink-0 flex-col h-full"
+        className="hidden md:flex flex-col h-full flex-shrink-0 relative overflow-hidden"
         style={{
-          width: "252px",
+          width: collapsed ? "72px" : "252px",
           background: "#0A1114",
           borderRight: "1px solid #1E2D35",
+          transition: "width 180ms ease",
         }}
       >
-        {navContent}
+        {collapsed ? collapsedNav : expandedNav}
+
+        {/* Collapse / expand toggle */}
+        <button
+          onClick={() => setCollapsed(c => !c)}
+          title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          className="absolute bottom-16 flex items-center justify-center rounded-lg transition-colors"
+          style={{
+            right: collapsed ? "50%" : "12px",
+            transform: collapsed ? "translateX(50%)" : "none",
+            width: "24px",
+            height: "24px",
+            background: "#131F25",
+            border: "1px solid #1E2D35",
+            color: "#566B76",
+          }}
+        >
+          {collapsed
+            ? <ChevronsRight size={12} />
+            : <ChevronsLeft size={12} />}
+        </button>
       </aside>
 
-      {/* Mobile top bar */}
+      {/* ── Mobile top bar ───────────────────────────────────────────────── */}
       <div
         className="md:hidden fixed top-0 left-0 right-0 z-30 flex items-center justify-between px-4 py-3"
         style={{ background: "#0A1114", borderBottom: "1px solid #1E2D35" }}
@@ -127,7 +194,7 @@ export default function Layout({ currentPage, onNavigate, children, reviewResult
         </button>
       </div>
 
-      {/* Mobile drawer */}
+      {/* ── Mobile drawer ────────────────────────────────────────────────── */}
       {mobileOpen && (
         <div
           className="md:hidden fixed inset-0 z-20"
@@ -139,14 +206,14 @@ export default function Layout({ currentPage, onNavigate, children, reviewResult
             style={{ background: "#0A1114", borderRight: "1px solid #1E2D35" }}
             onClick={e => e.stopPropagation()}
           >
-            {navContent}
+            {expandedNav}
           </aside>
         </div>
       )}
 
-      {/* Workspace */}
+      {/* ── Workspace ────────────────────────────────────────────────────── */}
       <main
-        className="flex-1 min-w-0 overflow-y-auto overflow-x-hidden md:pt-0 pt-[52px]"
+        className="flex-1 min-w-0 w-full overflow-y-auto overflow-x-hidden md:pt-0 pt-[52px]"
         style={{ background: "#080D10" }}
       >
         {children}

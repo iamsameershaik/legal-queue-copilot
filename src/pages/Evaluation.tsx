@@ -39,7 +39,7 @@ export default function Evaluation({ evalTests }: EvaluationProps) {
   ];
 
   return (
-    <div className="w-full max-w-[1100px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="w-full px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-6">
         <h1 className="page-title mb-1">Evaluation</h1>
         <p className="body-text">Initial eval suite across {total} synthetic legal scenarios.</p>
