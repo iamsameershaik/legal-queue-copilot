@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This document explains how a legal reviewer would use Legal Queue Copilot, how to interpret outputs, and what the legal team needs to do before this tool can go into production use.
+This document explains how a legal reviewer would use ClauseCompass, how to interpret outputs, and what the legal team needs to do before this tool can go into production use.
 
 ---
 

@@ -52,7 +52,7 @@ export default function Layout({ currentPage, onNavigate, children, reviewResult
             <Scale size={13} color="#040D09" strokeWidth={2.5} />
           </div>
           <div>
-            <p className="text-sm font-semibold text-[#E8EFF2] leading-tight">Legal Queue Copilot</p>
+            <p className="text-sm font-semibold text-[#E8EFF2] leading-tight">ClauseCompass</p>
             <p className="text-[11px] text-[#566B76] leading-tight mt-0.5">First-pass legal triage</p>
           </div>
         </div>
@@ -116,7 +116,7 @@ export default function Layout({ currentPage, onNavigate, children, reviewResult
           <div className="w-6 h-6 rounded-md flex items-center justify-center" style={{ background: "#16C784" }}>
             <Scale size={11} color="#040D09" strokeWidth={2.5} />
           </div>
-          <p className="text-sm font-semibold text-[#E8EFF2]">Legal Queue Copilot</p>
+          <p className="text-sm font-semibold text-[#E8EFF2]">ClauseCompass</p>
         </div>
         <button
           onClick={() => setMobileOpen(o => !o)}

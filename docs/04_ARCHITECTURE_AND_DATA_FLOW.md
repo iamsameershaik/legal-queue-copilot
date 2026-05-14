@@ -2,7 +2,7 @@
 
 ## System overview
 
-Legal Queue Copilot is a single-page application (SPA) built with Vite, React 18, and TypeScript. The prototype uses localStorage for persistence. The architecture is structured so Supabase queries can replace localStorage calls directly.
+ClauseCompass is a single-page application (SPA) built with Vite, React 18, and TypeScript. The prototype uses localStorage for persistence. The architecture is structured so Supabase queries can replace localStorage calls directly.
 
 ---
 

@@ -12,7 +12,7 @@ We are in final submission-packaging mode. Create a polished documentation pack 
 
 ### Context
 
-- Project: Legal Queue Copilot
+- Project: ClauseCompass (Legal Queue Copilot)
 - Assignment: PortSwigger AI Pioneer take-home
 - The app demonstrates: problem understanding, hands-on AI product building, legal workflow thinking, human-in-the-loop safety, honest evaluation, handover readiness, ability to ship and document clearly
 

@@ -1,4 +1,4 @@
-# AI Pioneer Sprint Brief — Legal Queue Copilot
+# AI Pioneer Sprint Brief — ClauseCompass
 
 ## Overview
 

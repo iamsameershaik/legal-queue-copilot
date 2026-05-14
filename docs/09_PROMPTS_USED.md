@@ -1,6 +1,6 @@
 # Prompts Used
 
-These prompts were used to build Legal Queue Copilot with Claude. They are included as part of the artefact trail — to demonstrate product thinking, system design intent, UI taste, and iterative reasoning approach.
+These prompts were used to build ClauseCompass (Legal Queue Copilot prototype) with Claude. They are included as part of the artefact trail — to demonstrate product thinking, system design intent, UI taste, and iterative reasoning approach.
 
 Prompts are paraphrased and condensed for readability. They are not raw chat dumps.
 
@@ -12,7 +12,7 @@ Prompts are paraphrased and condensed for readability. They are not raw chat dum
 
 **Summary of prompt:**
 
-> Build a production-quality Vite + React + TypeScript application called "Legal Queue Copilot" — a first-pass AI triage system for routine commercial contracts.
+> Build a production-quality Vite + React + TypeScript application called "ClauseCompass" (Legal Queue Copilot) — a first-pass AI triage system for routine commercial contracts.
 >
 > The app should have 6 pages: Dashboard (Command Centre), New Contract Review, Review Results, Playbook Rules, Evaluation, Handover/Activity Log.
 >

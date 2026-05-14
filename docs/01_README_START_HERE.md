@@ -2,7 +2,7 @@
 
 ## What is this?
 
-**Legal Queue Copilot** is a working prototype for first-pass AI triage of routine commercial contracts. It was built as a take-home artefact for the PortSwigger AI Pioneer role.
+**ClauseCompass** is a working prototype for first-pass AI triage of routine commercial contracts. Built as a Legal Queue Copilot prototype for the PortSwigger AI Pioneer take-home task.
 
 ---
 

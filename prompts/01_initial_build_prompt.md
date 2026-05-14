@@ -1,12 +1,12 @@
 # Prompt 1 — Initial Product Build
 
-**Goal:** Scaffold Legal Queue Copilot from scratch as a working production-quality prototype.
+**Goal:** Scaffold ClauseCompass from scratch as a working production-quality prototype.
 
 ---
 
 ## Prompt (condensed)
 
-Build a production-quality Vite + React + TypeScript single-page application called **Legal Queue Copilot** — a first-pass AI triage system for routine commercial contracts.
+Build a production-quality Vite + React + TypeScript single-page application called **ClauseCompass** — a first-pass AI triage system for routine commercial contracts.
 
 ### App structure
 

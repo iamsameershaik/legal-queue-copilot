@@ -1,6 +1,6 @@
-# Legal Queue Copilot
+# ClauseCompass
 
-First-pass AI triage for routine commercial contracts.
+First-pass legal triage.
 
 ---
 
@@ -16,7 +16,7 @@ First-pass AI triage for routine commercial contracts.
 
 Small in-house legal teams receive a steady stream of repetitive low-risk commercial contracts — mutual NDAs, customer order forms, vendor agreements. Most are mostly boilerplate, but each still requires human review before signing.
 
-Legal Queue Copilot demonstrates how AI can reduce the repetitive first-pass component of that workflow while keeping legal judgment and approval entirely with humans. The goal is faster triage, not autonomous approval.
+ClauseCompass demonstrates how AI can reduce the repetitive first-pass component of that workflow while keeping legal judgment and approval entirely with humans. The goal is faster triage, not autonomous approval.
 
 ---
 
@@ -198,4 +198,4 @@ See `/prompts` for cleaned-up versions of the build prompts.
 
 ---
 
-_Take-home assignment artefact for PortSwigger AI Pioneer role. Not production software. Not legal advice._
+_Built as a Legal Queue Copilot prototype for the PortSwigger AI Pioneer take-home task. Not production software. Not legal advice._

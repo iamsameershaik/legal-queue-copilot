@@ -6,7 +6,7 @@
 
 ## Overview
 
-The playbook is the policy layer of Legal Queue Copilot. It defines what the AI checks, what it flags, and what it suggests. Lawyers own the playbook. The AI applies it.
+The playbook is the policy layer of ClauseCompass. It defines what the AI checks, what it flags, and what it suggests. Lawyers own the playbook. The AI applies it.
 
 Each rule covers one clause type and specifies:
 - **Preferred position** — the company's standard ask
