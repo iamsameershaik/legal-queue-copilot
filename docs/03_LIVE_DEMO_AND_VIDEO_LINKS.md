@@ -65,5 +65,3 @@ Navigate to **Handover**.
 > "Every redline in this tool requires human approval before it goes externally. The system doesn't approve contracts — it makes lawyers faster. That's the design intent."
 
 ---
-
-_Fill in the Netlify and Loom links before submission._
