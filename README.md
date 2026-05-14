@@ -7,7 +7,7 @@ First-pass legal triage.
 | | |
 |---|---|
 | **Live demo** | https://clausecompass.netlify.app/ |
-| **Video walkthrough** | _[add Loom/video link]_ |
+| **Video walkthrough** | https://drive.google.com/file/d/1glA6a2GmQRi32N1jdMaqJXCDnUl7dNwb/view |
 | **GitHub repo** | https://github.com/iamsameershaik/legal-queue-copilot |
 
 ---
