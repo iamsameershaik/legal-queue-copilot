@@ -286,7 +286,6 @@ The `/docs` folder contains the original v1 submission artefacts:
 | `07_HANDOVER_RUNBOOK.md` | Legal team adoption plan |
 | `08_ASSUMPTIONS_LIMITATIONS_AND_NEXT_STEPS.md` | Honest scope and production path |
 | `09_PROMPTS_USED.md` | Prompts used during build |
-| `10_SUBMISSION_CHECKLIST.md` | Pre-submission verification |
 
 The repository has since been extended into v2 as a portfolio demonstration of a more complete
 AI-assisted legal workflow. The v1 docs reflect the original sprint scope and have not been updated
