@@ -21,63 +21,147 @@ interface LayoutProps {
   reviewResultsAvailable: boolean;
 }
 
-const NAV_ITEMS: {
-  id: Page;
-  label: string;
-  icon: LucideIcon;
-}[] = [
-  { id: "dashboard",      label: "Command Centre",  icon: LayoutDashboard },
-  { id: "new-review",     label: "New Review",      icon: FilePlus },
-  { id: "review-results", label: "Review Results",  icon: FileText },
-  { id: "playbook",       label: "Playbook",        icon: BookOpen },
-  { id: "evaluation",     label: "Evaluation",      icon: FlaskConical },
-  { id: "activity-log",   label: "Handover",        icon: ClipboardList },
+const NAV_ITEMS: { id: Page; label: string; icon: LucideIcon }[] = [
+  { id: "dashboard",      label: "Command Centre", icon: LayoutDashboard },
+  { id: "new-review",     label: "New Review",     icon: FilePlus        },
+  { id: "review-results", label: "Review Results", icon: FileText        },
+  { id: "playbook",       label: "Playbook",       icon: BookOpen        },
+  { id: "evaluation",     label: "Evaluation",     icon: FlaskConical    },
+  { id: "activity-log",   label: "Handover",       icon: ClipboardList   },
 ];
 
-export default function Layout({ currentPage, onNavigate, children, reviewResultsAvailable }: LayoutProps) {
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [collapsed, setCollapsed] = useState(false);
-
-  function navigate(page: Page) {
-    onNavigate(page);
-    setMobileOpen(false);
-  }
-
-  /* ── Expanded sidebar content ───────────────────────────────────────── */
-  const expandedNav = (
+/* Sidebar content — single tree used for both desktop and mobile drawer.
+   `collapsed` only applies on desktop; mobile drawer is always expanded. */
+function SidebarContent({
+  currentPage,
+  onNavigate,
+  reviewResultsAvailable,
+  collapsed = false,
+}: {
+  currentPage: Page;
+  onNavigate: (page: Page) => void;
+  reviewResultsAvailable: boolean;
+  collapsed?: boolean;
+}) {
+  return (
     <>
       {/* Brand */}
       <div
-        className="px-4 pt-4 pb-3.5 flex-shrink-0"
-        style={{ borderBottom: "1px solid rgba(142,182,155,0.12)" }}
+        className="flex-shrink-0 flex items-center px-3 pt-4 pb-3.5"
+        style={{
+          borderBottom: "1px solid rgba(142,182,155,0.12)",
+          gap: collapsed ? 0 : 10,
+          justifyContent: collapsed ? "center" : "flex-start",
+          transition: "gap 180ms ease, justify-content 180ms ease",
+        }}
       >
-        <div className="flex items-center gap-3">
-          <div className="flex-shrink-0" style={{ filter: "drop-shadow(0 0 8px rgba(22,199,132,0.28))" }}>
-            <BrandMark size={30} />
-          </div>
-          <div className="min-w-0 cc-sidebar-label" style={{ transition: "opacity 160ms ease, transform 160ms ease" }}>
-            <p className="text-[13px] font-semibold leading-tight" style={{ color: "#F2FFF7" }}>ClauseCompass</p>
-            <p className="text-[10px] leading-tight mt-0.5" style={{ color: "#7E948A" }}>Legal triage copilot</p>
-          </div>
+        <div
+          className="flex-shrink-0"
+          style={{ filter: "drop-shadow(0 0 8px rgba(22,199,132,0.28))" }}
+        >
+          <BrandMark size={28} />
+        </div>
+
+        {/* Label — fades and clips horizontally */}
+        <div
+          aria-hidden={collapsed}
+          style={{
+            overflow: "hidden",
+            whiteSpace: "nowrap",
+            maxWidth: collapsed ? 0 : 160,
+            opacity: collapsed ? 0 : 1,
+            transition: "max-width 180ms ease, opacity 140ms ease",
+            pointerEvents: collapsed ? "none" : "auto",
+          }}
+        >
+          <p className="text-[13px] font-semibold leading-tight" style={{ color: "#F2FFF7" }}>
+            ClauseCompass
+          </p>
+          <p className="text-[10px] leading-tight mt-0.5" style={{ color: "#7E948A" }}>
+            Legal triage copilot
+          </p>
         </div>
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-2.5 py-3 space-y-0.5 overflow-y-auto">
+      <nav
+        className="flex-1 py-3 overflow-y-auto"
+        style={{ padding: "12px 8px" }}
+      >
         {NAV_ITEMS.map(({ id, label, icon: Icon }) => {
-          const isActive = currentPage === id;
+          const isActive   = currentPage === id;
           const isDisabled = id === "review-results" && !reviewResultsAvailable;
+
           return (
             <button
               key={id}
-              onClick={() => !isDisabled && navigate(id)}
+              onClick={() => !isDisabled && onNavigate(id)}
               disabled={isDisabled}
+              title={collapsed ? label : undefined}
               aria-label={label}
-              className={isActive ? "nav-item-active" : "nav-item"}
-              style={isDisabled ? { opacity: 0.28, cursor: "not-allowed" } : {}}
+              className="relative flex items-center w-full rounded-lg mb-0.5"
+              style={{
+                height: 36,
+                gap: 10,
+                /* Keep icon centred when collapsed by padding symmetrically */
+                padding: collapsed ? "0 11px" : "0 10px",
+                justifyContent: collapsed ? "center" : "flex-start",
+                background: isActive ? "rgba(22,199,132,0.09)" : "transparent",
+                color: isActive ? "#16C784" : "#7E948A",
+                boxShadow: isActive ? "inset 0 1px 0 rgba(218,241,222,0.08)" : "none",
+                opacity: isDisabled ? 0.28 : 1,
+                cursor: isDisabled ? "not-allowed" : "pointer",
+                border: "none",
+                fontWeight: isActive ? 600 : 500,
+                fontSize: 13,
+                transition: "background 120ms, color 120ms, padding 180ms ease",
+              }}
+              onMouseEnter={e => {
+                if (!isActive) (e.currentTarget as HTMLButtonElement).style.background = "rgba(11,43,38,0.8)";
+              }}
+              onMouseLeave={e => {
+                if (!isActive) (e.currentTarget as HTMLButtonElement).style.background = "transparent";
+              }}
             >
-              <Icon size={14} className="flex-shrink-0" />
-              <span className="flex-1 text-left">{label}</span>
+              {/* Icon — always in a fixed-width container so it never shifts */}
+              <span className="flex-shrink-0 flex items-center justify-center" style={{ width: 16 }}>
+                <Icon size={14} />
+              </span>
+
+              {/* Label — fades and clips */}
+              <span
+                aria-hidden={collapsed}
+                style={{
+                  overflow: "hidden",
+                  whiteSpace: "nowrap",
+                  maxWidth: collapsed ? 0 : 180,
+                  opacity: collapsed ? 0 : 1,
+                  transition: "max-width 180ms ease, opacity 140ms ease",
+                  flex: 1,
+                  textAlign: "left",
+                  pointerEvents: "none",
+                }}
+              >
+                {label}
+              </span>
+
+              {/* Right-edge active gradient bar — always rendered, fades when inactive */}
+              <span
+                aria-hidden="true"
+                style={{
+                  position: "absolute",
+                  right: 0,
+                  top: 6,
+                  bottom: 6,
+                  width: 3,
+                  borderRadius: "3px 0 0 3px",
+                  background: "linear-gradient(180deg, #20F29C, #16C784)",
+                  boxShadow: "0 0 8px rgba(22,199,132,0.5)",
+                  opacity: isActive ? 1 : 0,
+                  transition: "opacity 140ms ease",
+                  pointerEvents: "none",
+                }}
+              />
             </button>
           );
         })}
@@ -85,13 +169,17 @@ export default function Layout({ currentPage, onNavigate, children, reviewResult
 
       {/* Footer */}
       <div
-        className="px-4 pb-4 pt-3 flex-shrink-0"
-        style={{ borderTop: "1px solid rgba(142,182,155,0.10)", transition: "opacity 160ms ease" }}
+        className="flex-shrink-0 px-3 pb-4 pt-3"
+        style={{
+          borderTop: "1px solid rgba(142,182,155,0.10)",
+          overflow: "hidden",
+          maxHeight: collapsed ? 0 : 80,
+          opacity: collapsed ? 0 : 1,
+          transition: "max-height 180ms ease, opacity 140ms ease",
+          pointerEvents: collapsed ? "none" : "auto",
+        }}
       >
-        <div
-          className="pill pill-neutral mb-3"
-          style={{ fontSize: "10px", display: "inline-flex" }}
-        >
+        <div className="pill pill-neutral mb-2" style={{ fontSize: "10px", display: "inline-flex" }}>
           Demo mode
         </div>
         <p className="text-[10.5px] leading-relaxed" style={{ color: "rgba(126,148,138,0.65)" }}>
@@ -100,72 +188,21 @@ export default function Layout({ currentPage, onNavigate, children, reviewResult
       </div>
     </>
   );
+}
 
-  /* ── Collapsed (icon-only) sidebar content ──────────────────────────── */
-  const collapsedNav = (
-    <>
-      {/* Brand icon only */}
-      <div
-        className="py-4 flex-shrink-0 flex justify-center"
-        style={{ borderBottom: "1px solid rgba(142,182,155,0.12)" }}
-      >
-        <div style={{ filter: "drop-shadow(0 0 7px rgba(22,199,132,0.25))" }}>
-          <BrandMark size={28} />
-        </div>
-      </div>
+export default function Layout({ currentPage, onNavigate, children, reviewResultsAvailable }: LayoutProps) {
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [collapsed, setCollapsed]   = useState(false);
 
-      {/* Nav — icons only */}
-      <nav className="flex-1 flex flex-col items-center py-3 gap-1 overflow-y-auto">
-        {NAV_ITEMS.map(({ id, icon: Icon, label }) => {
-          const isActive = currentPage === id;
-          const isDisabled = id === "review-results" && !reviewResultsAvailable;
-          return (
-            <button
-              key={id}
-              onClick={() => !isDisabled && navigate(id)}
-              disabled={isDisabled}
-              title={label}
-              aria-label={label}
-              className="w-10 h-10 rounded-lg flex items-center justify-center transition-all relative"
-              style={{
-                background: isActive ? "rgba(22,199,132,0.12)" : "transparent",
-                color: isActive ? "#16C784" : "#7E948A",
-                opacity: isDisabled ? 0.28 : 1,
-                cursor: isDisabled ? "not-allowed" : "pointer",
-                boxShadow: isActive ? "inset 0 1px 0 rgba(218,241,222,0.08)" : "none",
-              }}
-            >
-              <Icon size={14} />
-              {/* Right-edge indicator on collapsed active item */}
-              {isActive && (
-                <span
-                  className="absolute right-0 top-2 bottom-2 rounded-l"
-                  style={{
-                    width: 3,
-                    background: "linear-gradient(180deg, #20F29C, #16C784)",
-                    boxShadow: "0 0 6px rgba(22,199,132,0.5)",
-                  }}
-                />
-              )}
-            </button>
-          );
-        })}
-      </nav>
-
-      {/* Footer spacer */}
-      <div
-        className="pb-4 pt-3 flex-shrink-0"
-        style={{ borderTop: "1px solid rgba(142,182,155,0.10)" }}
-      />
-    </>
-  );
+  function navigate(page: Page) {
+    onNavigate(page);
+    setMobileOpen(false);
+  }
 
   return (
-    <div
-      className="flex h-screen overflow-hidden"
-      style={{ background: "var(--cc-bg-deep)" }}
-    >
-      {/* ── Cinematic app background glow ────────────────────────────────── */}
+    <div className="flex h-screen overflow-hidden" style={{ background: "var(--cc-bg-deep)" }}>
+
+      {/* ── Cinematic background glow ────────────────────────────────────── */}
       <div
         aria-hidden="true"
         style={{
@@ -184,34 +221,39 @@ export default function Layout({ currentPage, onNavigate, children, reviewResult
       <aside
         className="hidden md:flex flex-col h-full flex-shrink-0 relative z-10 overflow-hidden"
         style={{
-          width: collapsed ? "72px" : "248px",
+          width: collapsed ? "60px" : "248px",
           background: "linear-gradient(180deg, #0B2B26 0%, #051F20 100%)",
           borderRight: "1px solid rgba(142,182,155,0.12)",
           transition: "width 180ms ease",
           boxShadow: "2px 0 24px rgba(3,19,20,0.5)",
         }}
       >
-        {collapsed ? collapsedNav : expandedNav}
+        <SidebarContent
+          currentPage={currentPage}
+          onNavigate={navigate}
+          reviewResultsAvailable={reviewResultsAvailable}
+          collapsed={collapsed}
+        />
 
-        {/* Collapse / expand toggle */}
+        {/* Collapse toggle */}
         <button
           onClick={() => setCollapsed(c => !c)}
           title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          className="absolute bottom-[72px] flex items-center justify-center rounded-lg transition-colors"
+          className="absolute bottom-[72px] flex items-center justify-center rounded-lg"
           style={{
-            right: collapsed ? "50%" : "12px",
-            transform: collapsed ? "translateX(50%)" : "none",
-            width: "22px",
-            height: "22px",
+            right: "50%",
+            transform: "translateX(50%)",
+            width: 22,
+            height: 22,
             background: "rgba(11,43,38,0.9)",
             border: "1px solid rgba(142,182,155,0.18)",
             color: "#7E948A",
+            transition: "background 120ms",
+            cursor: "pointer",
           }}
         >
-          {collapsed
-            ? <ChevronsRight size={11} />
-            : <ChevronsLeft size={11} />}
+          {collapsed ? <ChevronsRight size={11} /> : <ChevronsLeft size={11} />}
         </button>
       </aside>
 
@@ -252,7 +294,13 @@ export default function Layout({ currentPage, onNavigate, children, reviewResult
             }}
             onClick={e => e.stopPropagation()}
           >
-            {expandedNav}
+            {/* Mobile drawer is always expanded */}
+            <SidebarContent
+              currentPage={currentPage}
+              onNavigate={navigate}
+              reviewResultsAvailable={reviewResultsAvailable}
+              collapsed={false}
+            />
           </aside>
         </div>
       )}
