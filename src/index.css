@@ -436,3 +436,45 @@
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(142, 182, 155, 0.32);
 }
+
+/* ═══════════════════════════════════════════════════
+   Background atmosphere canvas
+   ═══════════════════════════════════════════════════ */
+
+/* Faint dot-grid texture on the workspace background */
+.cc-workspace-bg {
+  background-image:
+    radial-gradient(circle, rgba(142, 182, 155, 0.045) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+/* ═══════════════════════════════════════════════════
+   Sidebar label collapse helpers
+   ═══════════════════════════════════════════════════ */
+
+/* Labels fade out when sidebar collapses */
+.cc-sidebar-label {
+  overflow: hidden;
+  white-space: nowrap;
+  opacity: 1;
+  max-width: 160px;
+}
+.cc-sidebar-collapsed .cc-sidebar-label {
+  opacity: 0;
+  max-width: 0;
+  pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════════════
+   Reduced motion
+   ═══════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

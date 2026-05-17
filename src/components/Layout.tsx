@@ -1,9 +1,10 @@
 import { useState } from "react";
 import {
   LayoutDashboard, FilePlus, FileText, BookOpen,
-  FlaskConical, ClipboardList, Scale, Menu, X, ChevronsLeft, ChevronsRight,
+  FlaskConical, ClipboardList, Menu, X, ChevronsLeft, ChevronsRight,
   type LucideIcon,
 } from "lucide-react";
+import BrandMark from "./BrandMark";
 
 export type Page =
   | "dashboard"
@@ -47,22 +48,16 @@ export default function Layout({ currentPage, onNavigate, children, reviewResult
     <>
       {/* Brand */}
       <div
-        className="px-5 pt-5 pb-4 flex-shrink-0"
+        className="px-4 pt-4 pb-3.5 flex-shrink-0"
         style={{ borderBottom: "1px solid rgba(142,182,155,0.12)" }}
       >
         <div className="flex items-center gap-3">
-          <div
-            className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
-            style={{
-              background: "linear-gradient(135deg, #16C784 0%, #0BDA51 100%)",
-              boxShadow: "0 0 12px rgba(22,199,132,0.30)",
-            }}
-          >
-            <Scale size={14} color="#031314" strokeWidth={2.5} />
+          <div className="flex-shrink-0" style={{ filter: "drop-shadow(0 0 8px rgba(22,199,132,0.28))" }}>
+            <BrandMark size={30} />
           </div>
-          <div className="min-w-0">
-            <p className="text-[13.5px] font-700 text-[#F2FFF7] leading-tight font-semibold">ClauseCompass</p>
-            <p className="text-[10.5px] leading-tight mt-0.5" style={{ color: "#7E948A" }}>Legal triage copilot</p>
+          <div className="min-w-0 cc-sidebar-label" style={{ transition: "opacity 160ms ease, transform 160ms ease" }}>
+            <p className="text-[13px] font-semibold leading-tight" style={{ color: "#F2FFF7" }}>ClauseCompass</p>
+            <p className="text-[10px] leading-tight mt-0.5" style={{ color: "#7E948A" }}>Legal triage copilot</p>
           </div>
         </div>
       </div>
@@ -90,8 +85,8 @@ export default function Layout({ currentPage, onNavigate, children, reviewResult
 
       {/* Footer */}
       <div
-        className="px-4 pb-4 pt-3 flex-shrink-0"
-        style={{ borderTop: "1px solid rgba(142,182,155,0.10)" }}
+        className="px-4 pb-4 pt-3 flex-shrink-0 cc-sidebar-label"
+        style={{ borderTop: "1px solid rgba(142,182,155,0.10)", maxWidth: "none", transition: "opacity 160ms ease" }}
       >
         <div
           className="pill pill-neutral mb-3"
@@ -111,17 +106,11 @@ export default function Layout({ currentPage, onNavigate, children, reviewResult
     <>
       {/* Brand icon only */}
       <div
-        className="py-5 flex-shrink-0 flex justify-center"
+        className="py-4 flex-shrink-0 flex justify-center"
         style={{ borderBottom: "1px solid rgba(142,182,155,0.12)" }}
       >
-        <div
-          className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
-          style={{
-            background: "linear-gradient(135deg, #16C784 0%, #0BDA51 100%)",
-            boxShadow: "0 0 12px rgba(22,199,132,0.28)",
-          }}
-        >
-          <Scale size={14} color="#031314" strokeWidth={2.5} />
+        <div style={{ filter: "drop-shadow(0 0 7px rgba(22,199,132,0.25))" }}>
+          <BrandMark size={28} />
         </div>
       </div>
 
@@ -236,12 +225,7 @@ export default function Layout({ currentPage, onNavigate, children, reviewResult
         }}
       >
         <div className="flex items-center gap-2">
-          <div
-            className="w-6 h-6 rounded-lg flex items-center justify-center"
-            style={{ background: "linear-gradient(135deg, #16C784 0%, #0BDA51 100%)" }}
-          >
-            <Scale size={11} color="#031314" strokeWidth={2.5} />
-          </div>
+          <BrandMark size={22} />
           <p className="text-[13px] font-semibold" style={{ color: "#F2FFF7" }}>ClauseCompass</p>
         </div>
         <button
@@ -275,7 +259,7 @@ export default function Layout({ currentPage, onNavigate, children, reviewResult
 
       {/* ── Workspace ────────────────────────────────────────────────────── */}
       <main
-        className="flex-1 min-w-0 w-full overflow-y-auto overflow-x-hidden md:pt-0 pt-[52px] relative z-10"
+        className="flex-1 min-w-0 w-full overflow-y-auto overflow-x-hidden md:pt-0 pt-[52px] relative z-10 cc-workspace-bg"
         style={{ background: "var(--cc-bg-deep)" }}
       >
         {children}

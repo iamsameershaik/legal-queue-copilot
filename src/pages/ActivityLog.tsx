@@ -108,8 +108,8 @@ export default function ActivityLog({ contracts, reviews, humanDecisions, playbo
         <div className="flex flex-col sm:flex-row items-start gap-6 sm:gap-8">
           <div className="flex-shrink-0">
             <p className="meta-label mb-2">Handover readiness</p>
-            <p className="text-5xl font-bold text-[#E8EFF2] leading-none">{READINESS_SCORE}<span className="text-2xl text-[#566B76] ml-1">%</span></p>
-            <p className="text-[12px] text-[#566B76] mt-2">Prototype stage · not production-ready</p>
+            <p className="text-5xl font-bold leading-none" style={{ color: "var(--cc-text)" }}>{READINESS_SCORE}<span className="text-2xl ml-1" style={{ color: "var(--cc-text-soft)" }}>%</span></p>
+            <p className="text-[12px] mt-2" style={{ color: "var(--cc-text-soft)" }}>Prototype stage · not production-ready</p>
           </div>
           <div className="hidden sm:block divider self-stretch" style={{ width: "1px", height: "auto" }} />
           <div className="flex-1 min-w-0 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
@@ -122,8 +122,8 @@ export default function ActivityLog({ contracts, reviews, humanDecisions, playbo
                   {item.status === "done" ? "✓" : item.status === "ready" ? "✓" : item.status === "partial" ? "~" : "○"}
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[12px] font-medium text-[#C8D8DF]">{item.label}</p>
-                  <p className="text-[11px] text-[#566B76]">{item.sub}</p>
+                  <p className="text-[12px] font-medium" style={{ color: "var(--cc-text-muted)" }}>{item.label}</p>
+                  <p className="text-[11px]" style={{ color: "var(--cc-text-soft)" }}>{item.sub}</p>
                 </div>
               </div>
             ))}
@@ -134,9 +134,9 @@ export default function ActivityLog({ contracts, reviews, humanDecisions, playbo
       {/* Stats strip */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {statsRow.map(({ label, value }) => (
-          <div key={label} className="surface-card p-4 text-center">
-            <p className="text-[22px] font-bold text-[#E8EFF2]">{value}</p>
-            <p className="meta-label mt-1">{label}</p>
+          <div key={label} className="stat-card text-center" style={{ overflow: "hidden" }}>
+            <p className="text-[24px] font-bold leading-none mb-1 relative z-10" style={{ color: "var(--cc-text)" }}>{value}</p>
+            <p className="meta-label relative z-10">{label}</p>
           </div>
         ))}
       </div>
