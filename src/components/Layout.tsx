@@ -101,7 +101,7 @@ function SidebarContent({
               aria-label={label}
               className="relative flex items-center w-full rounded-lg mb-0.5"
               style={{
-                height: 36,
+                height: 66,
                 gap: 10,
                 /* Keep icon centred when collapsed by padding symmetrically */
                 padding: collapsed ? "0 11px" : "0 10px",
