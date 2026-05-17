@@ -71,7 +71,3 @@ Tone: confident, concise, product-minded, honest. No hype. No claims of producti
 ### Build
 
 Run `npm run build`. Fix any errors.
-
-### Git
-
-Cannot push (no GitHub connected). Report the exact git commands needed.
