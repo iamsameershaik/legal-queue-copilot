@@ -85,8 +85,8 @@ export default function Layout({ currentPage, onNavigate, children, reviewResult
 
       {/* Footer */}
       <div
-        className="px-4 pb-4 pt-3 flex-shrink-0 cc-sidebar-label"
-        style={{ borderTop: "1px solid rgba(142,182,155,0.10)", maxWidth: "none", transition: "opacity 160ms ease" }}
+        className="px-4 pb-4 pt-3 flex-shrink-0"
+        style={{ borderTop: "1px solid rgba(142,182,155,0.10)", transition: "opacity 160ms ease" }}
       >
         <div
           className="pill pill-neutral mb-3"
