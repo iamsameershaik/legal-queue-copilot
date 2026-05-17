@@ -1,5 +1,12 @@
 export type PreflightStatus = "accept" | "warn" | "reject";
 
+export type DocumentTypeGuess =
+  | "commercial-contract"
+  | "contract-excerpt"
+  | "repository-documentation"
+  | "non-contract-text"
+  | "ambiguous-legal-text";
+
 export interface ContractPreflightResult {
   status: PreflightStatus;
   confidence: number;
@@ -9,6 +16,7 @@ export interface ContractPreflightResult {
   detectedSignals: string[];
   missingSignals: string[];
   recommendedAction: string;
+  documentTypeGuess: DocumentTypeGuess;
 }
 
 // ─── Signal definitions ────────────────────────────────────────────────────
@@ -80,6 +88,45 @@ const NEGATIVE_SIGNALS: NegativeSignal[] = [
   { label: "Transcript",                       pattern: /\b(transcript|[A-Z]{2,}:\s|interviewer:|interviewee:|speaker \d:)\b/i,  weight: 7 },
 ];
 
+/*
+ * Documentation / repository signals — scored separately so we can apply a
+ * nuanced rule: high doc score + weak party-obligation structure = reject,
+ * but high doc score + strong contract structure = warn (still suspicious).
+ *
+ * These signals indicate the text is about software, tooling, or project
+ * documentation rather than a binding legal document.
+ */
+interface DocSignal { label: string; pattern: RegExp; weight: number; }
+
+const DOC_SIGNALS: DocSignal[] = [
+  // Build / run tooling
+  { label: "npm install / run command",     pattern: /\bnpm (install|run|start|build|test)\b/i,                        weight: 8 },
+  { label: "package.json reference",        pattern: /\bpackage\.json\b/i,                                              weight: 7 },
+  { label: "Run locally / dev server",      pattern: /\b(run locally|running locally|start the dev server|vite|localhost:\d+)\b/i, weight: 7 },
+  // Deployment / hosting
+  { label: "Deployment platform",           pattern: /\b(netlify|vercel|heroku|railway|render\.com|github pages)\b/i,  weight: 7 },
+  { label: "Supabase setup language",       pattern: /\b(supabase-?ready|supabase project|supabase url|anon key)\b/i, weight: 7 },
+  // Repository structure
+  { label: "Repository / GitHub signals",   pattern: /\b(readme|github\.com|git clone|repository|repo\b|\.gitignore|open source)\b/i, weight: 7 },
+  { label: "Source directory paths",        pattern: /\b(src\/|\/components\/|\/services\/|\/pages\/|\/lib\/|\/utils\/)\b/i, weight: 6 },
+  { label: "Docs folder reference",         pattern: /\b(\/docs|docs\/|docs folder|\/prompts|sample-contracts)\b/i,   weight: 6 },
+  { label: "File listing / artefacts",      pattern: /\b(submission artefacts?|artefacts|handover runbook|live demo|video walkthrough|tech stack)\b/i, weight: 7 },
+  // Product description language (about a tool, not a legal document)
+  { label: "Product description language",  pattern: /\b(is a (tool|app|platform|copilot|dashboard|prototype|product)|built (with|on|using)|powered by)\b/i, weight: 5 },
+  { label: "Architecture / design docs",    pattern: /\b(architecture|data flow|system design|known limitations|next steps|tech stack|component)\b/i, weight: 5 },
+  { label: "Markdown file list",            pattern: /^\s*[-*]\s+\d{2}_[A-Z_]+\.md\b/m,                               weight: 8 },
+  // Evaluation / testing language that is product-specific
+  { label: "Eval / test output language",   pattern: /\b(eval (report|dashboard|results)|pass rate|fixture|test case|test suite)\b/i, weight: 5 },
+];
+
+/* Minimum doc score before the documentation rejection path fires */
+const DOC_REJECT_THRESHOLD = 10;
+/*
+ * If doc score exceeds this AND party-obligation structure is strong,
+ * cap at warn rather than reject (it might be a README that embeds a real contract).
+ */
+const DOC_FORCE_WARN_THRESHOLD = 18;
+
 // ─── Scoring thresholds ────────────────────────────────────────────────────
 
 const ACCEPT_CONTRACT_THRESHOLD = 20; // contract score ≥ this → accept (unless strong negative)
@@ -125,6 +172,7 @@ export function classifyContractInput(
       missingSignals: ["Agreement language", "Party obligations", "Legal clauses"],
       recommendedAction:
         "Paste the full contract text, including parties, obligations, and governing law clauses.",
+      documentTypeGuess: "non-contract-text",
     };
   }
 
@@ -155,16 +203,63 @@ export function classifyContractInput(
     }
   }
 
+  // ── Score documentation / repository signals ──────────────────────────
+  const docHits: string[] = [];
+  let docScore = 0;
+
+  for (const sig of DOC_SIGNALS) {
+    if (sig.pattern.test(trimmed)) {
+      docHits.push(sig.label);
+      docScore += sig.weight;
+    }
+  }
+
   // ── Core signal check ──────────────────────────────────────────────────
   const coreMatches = CORE_SIGNAL_PATTERNS.filter((p) => p.test(trimmed)).length;
+
+  /*
+   * Party-obligation strength: a real contract needs parties + at least one
+   * obligation-carrying clause (shall / governing law / liability / signature).
+   * Documentation about contracts may score well on keywords but lacks this.
+   */
+  const hasParties = /\b(between|by and between|entered into between)\b/i.test(trimmed) ||
+                     /"(Company|Supplier|Customer|Vendor|Recipient|Licensor|Licensee)"/i.test(trimmed);
+  const hasObligation = /\b(shall|covenants? to|undertakes? to|hereby agrees)\b/i.test(trimmed);
+  const hasGoverningLaw = /\bgoverning law\b/i.test(trimmed);
+  const hasSignature = /\b(signed|signature|authorised representative|duly authorised)\b/i.test(trimmed);
+  const partyObligationScore =
+    (hasParties ? 3 : 0) +
+    (hasObligation ? 3 : 0) +
+    (hasGoverningLaw ? 2 : 0) +
+    (hasSignature ? 2 : 0);
 
   // ── Determine status ───────────────────────────────────────────────────
   let status: PreflightStatus;
   const reasons: string[] = [];
 
+  /*
+   * Documentation rejection path.
+   * Fires when documentation signals are strong. If party-obligation structure
+   * is also strong (≥ 7/10), cap at warn — it may be a README that embeds a
+   * real contract. Otherwise reject outright.
+   */
+  if (docScore >= DOC_REJECT_THRESHOLD && partyObligationScore < 7) {
+    if (docScore >= DOC_FORCE_WARN_THRESHOLD) {
+      // Extremely strong doc signals — reject regardless
+      status = "reject";
+    } else {
+      status = "reject";
+    }
+    reasons.push(`Repository or product documentation signals detected: ${docHits.slice(0, 3).join(", ")}.`);
+    reasons.push("No binding party obligations or legal clause structure found.");
+  } else if (docScore >= DOC_REJECT_THRESHOLD && partyObligationScore >= 7) {
+    // Has both doc signals and real contract structure — suspicious, warn
+    status = "warn";
+    reasons.push("Document mixes product/repository language with contract-like clauses.");
+    reasons.push("Review carefully — may be documentation about a contract rather than the contract itself.");
   // Strong negative signals dominate — raise contractScore cut-off so meeting notes
   // with incidental legal words still get rejected
-  if (negativeScore >= REJECT_NEGATIVE_THRESHOLD && contractScore < 22) {
+  } else if (negativeScore >= REJECT_NEGATIVE_THRESHOLD && contractScore < 22) {
     status = "reject";
     reasons.push(...negativeHits.map((h) => `Non-contract signal detected: ${h}`));
     if (contractScore < WARN_CONTRACT_THRESHOLD) {
@@ -172,9 +267,9 @@ export function classifyContractInput(
     }
   } else if (
     contractScore >= ACCEPT_CONTRACT_THRESHOLD &&
-    coreMatches >= 2 &&
-    /* Documents under 350 chars are always ambiguous — cap at warn even if dense with signals */
-    trimmed.length >= 350
+    /* Require 3 core signals and 400+ chars to avoid short excerpts getting accepted */
+    coreMatches >= 3 &&
+    trimmed.length >= 400
   ) {
     status = "accept";
     reasons.push(`${detected.length} contract-like signals detected.`);
@@ -192,6 +287,9 @@ export function classifyContractInput(
     }
     if (negativeScore > 0) {
       reasons.push(`Some non-contract signals detected: ${negativeHits.join(", ")}.`);
+    }
+    if (docScore > 0 && docScore < DOC_REJECT_THRESHOLD) {
+      reasons.push(`Some documentation signals present: ${docHits.slice(0, 2).join(", ")}.`);
     }
   } else {
     status = "reject";
@@ -250,6 +348,18 @@ export function classifyContractInput(
 
   const copy = copyMap[status];
 
+  // ── Document type guess ───────────────────────────────────────────────
+  let documentTypeGuess: DocumentTypeGuess;
+  if (docScore >= DOC_REJECT_THRESHOLD) {
+    documentTypeGuess = "repository-documentation";
+  } else if (status === "reject") {
+    documentTypeGuess = "non-contract-text";
+  } else if (status === "accept") {
+    documentTypeGuess = trimmed.length >= 1000 ? "commercial-contract" : "contract-excerpt";
+  } else {
+    documentTypeGuess = "ambiguous-legal-text";
+  }
+
   return {
     status,
     confidence,
@@ -259,5 +369,6 @@ export function classifyContractInput(
     detectedSignals: detected,
     missingSignals: status === "accept" ? [] : missingSignals.slice(0, 4),
     recommendedAction: copy.recommendedAction,
+    documentTypeGuess,
   };
 }

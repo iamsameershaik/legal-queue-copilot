@@ -281,6 +281,69 @@ Hi Sarah, just checking on the NDA timeline. Can we sign by end of week?`,
     rationale: "Very short but contains NDA keyword, parties, confidentiality, and governing law. Should warn not reject.",
     inputText: `NON-DISCLOSURE AGREEMENT between Company ("Disclosing Party") and Vendor ("Receiving Party"). The Receiving Party shall keep all Confidential Information secret. This Agreement is governed by the laws of England and Wales. Effective Date: 1 June 2026.`,
   },
+  // ── Documentation / repository edge cases ──────────────────────────────
+  {
+    id: "ptc-16",
+    name: "GitHub README / submission artefacts",
+    category: "non-contract",
+    expectedStatus: "reject",
+    rationale: "Classic README structure with npm commands, docs folder references, and deployment platform — no party obligations. Should reject despite containing legal keywords like NDA and playbook.",
+    inputText: `Submission artefacts
+See the /docs folder:
+- 01_README_START_HERE.md — Reviewer onboarding and review path
+- 04_ARCHITECTURE_AND_DATA_FLOW.md — System design and data flow
+- 06_EVAL_REPORT.md — Evaluation results and preflight pass rate
+
+Run locally:
+npm install
+npm run dev
+
+Deployment: Netlify
+Tech stack: Vite, React, TypeScript, Supabase-ready architecture
+Live demo: https://clausecompass.netlify.app
+Video walkthrough: see /docs/03_LIVE_DEMO_AND_VIDEO_LINKS.md
+
+Known limitations: No PDF parsing yet. NDA and order form samples only. Playbook is deterministic, not LLM-powered.`,
+  },
+  {
+    id: "ptc-17",
+    name: "Product documentation about a legal triage tool",
+    category: "non-contract",
+    expectedStatus: "reject",
+    rationale: "Product description containing legal keywords (NDA, redline, liability, playbook) but no parties, obligations, or governing law. Should reject — this describes a product, not a contract.",
+    inputText: `ClauseCompass is a first-pass legal triage tool for NDAs and order forms. It includes a deterministic playbook, an eval dashboard, redline suggestions, and a Supabase-ready architecture. The platform classifies contract risk as Green, Amber, or Red, and generates suggested redlines for liability, indemnity, governing law, and auto-renewal clauses. Built with Vite, React, and TypeScript. Powered by a rule-based review engine. Human approval required before any external redline is sent.`,
+  },
+  {
+    id: "ptc-18",
+    name: "Markdown-formatted contract with numbered clauses",
+    category: "valid-contract",
+    expectedStatus: "accept",
+    rationale: "Real contract written in Markdown with parties, numbered clauses, obligations (shall), governing law, and effective date. Markdown formatting alone should not cause rejection.",
+    inputText: `# Mutual Non-Disclosure Agreement
+
+This Agreement is entered into between ACME Ltd ("Company") and Supplier Ltd ("Counterparty").
+
+**Effective Date:** 1 June 2026
+
+## 1. Confidentiality
+
+Each party shall keep Confidential Information confidential and shall not disclose it to any third party without prior written consent of the other party.
+
+## 2. Term
+
+This Agreement commences on the Effective Date and continues for two (2) years. The obligations of confidentiality shall survive termination of this Agreement for a further two (2) years.
+
+## 3. Liability
+
+Each party's aggregate liability under this Agreement shall not exceed £10,000.
+
+## 4. Governing Law
+
+This Agreement is governed by the laws of England and Wales. The courts of England and Wales shall have exclusive jurisdiction.
+
+Signed: ______________________
+Date: ______________________`,
+  },
   {
     id: "ptc-15",
     name: "Partner NDA with publicity and assignment clauses",
