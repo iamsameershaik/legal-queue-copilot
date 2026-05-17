@@ -85,7 +85,7 @@ const NEGATIVE_SIGNALS: NegativeSignal[] = [
   { label: "Essay / academic",                 pattern: /\b(in conclusion|furthermore|however it should be noted|this essay|the purpose of this paper)\b/i, weight: 6 },
   { label: "Invoice only (no obligations)",    pattern: /\b(invoice number|bill to:|payment due:|total amount due|purchase order #)\b/i, weight: 5 },
   { label: "News / press release",             pattern: /\b(press release|for immediate release|media contact|about [A-Z]\w+ \(company\))\b/i, weight: 7 },
-  { label: "Transcript",                       pattern: /\b(transcript|[A-Z]{2,}:\s|interviewer:|interviewee:|speaker \d:)\b/i,  weight: 7 },
+  { label: "Transcript",                       pattern: /\b(transcript|interviewer:|interviewee:)\b|^speaker\s+\d+:/im,             weight: 7 },
 ];
 
 /*

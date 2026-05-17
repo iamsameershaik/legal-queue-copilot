@@ -154,7 +154,7 @@ A fixture-based eval (`runContractPreflightEval`) verifies all paths automatical
 
 | Check | Current result | Notes |
 |---|---|---|
-| Preflight guardrail fixtures | 17/18 · 94% pass rate | 18 synthetic test cases |
+| Preflight guardrail fixtures | 18/18 · 100% pass rate | 18 synthetic test cases |
 | Citation coverage | 100% · 128/128 checks | 5 sample contracts, 16 findings, 16 redlines |
 | Fabricated legal refs | 0 | No external URLs generated |
 | Synthetic review eval | 87.5% pass rate | 8 labelled scenarios |
