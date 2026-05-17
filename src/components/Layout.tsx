@@ -173,7 +173,7 @@ function SidebarContent({
         style={{
           borderTop: "1px solid rgba(142,182,155,0.10)",
           overflow: "hidden",
-          maxHeight: collapsed ? 0 : 90,
+          maxHeight: collapsed ? 0 : 100,
           opacity: collapsed ? 0 : 1,
           transition: "max-height 180ms ease, opacity 140ms ease",
           pointerEvents: collapsed ? "none" : "auto",
