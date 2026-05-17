@@ -9,14 +9,30 @@ interface DashboardProps {
   humanDecisions: HumanDecision[];
   onNavigate: (page: Page) => void;
   onLoadDemo: () => void;
+  onOpenReview: (reviewId: string) => void;
+  onOpenDraft: (contractId: string) => void;
 }
 
-const QUEUE_DATA = [
-  { id: "q1", title: "Mutual NDA — Supplier Co Ltd",         counterparty: "Supplier Co Ltd",     type: "Mutual NDA",         risk: "Green" as const, route: "Batch spot-check",          issue: "None — routine",                       saved: "12 min", age: "2h ago",   status: "Reviewed"  },
-  { id: "q2", title: "NDA — TechCorp Inc",                   counterparty: "TechCorp Inc",         type: "Mutual NDA",         risk: "Amber" as const, route: "Lawyer quick review",       issue: "Governing Law: California",            saved: "15 min", age: "4h ago",   status: "Reviewed"  },
-  { id: "q3", title: "SaaS Order Form — DataSoft Solutions", counterparty: "DataSoft Solutions",   type: "Customer Order Form",risk: "Amber" as const, route: "Commercial/legal review",   issue: "Auto-renewal, net 90 payment",         saved: "18 min", age: "Yesterday",status: "Reviewed"  },
-  { id: "q4", title: "Enterprise SaaS — CloudBase Corp",     counterparty: "CloudBase Corp",       type: "Customer Order Form",risk: "Red"   as const, route: "Full legal review",         issue: "Uncapped liability, broad indemnity",  saved: "22 min", age: "Yesterday",status: "Escalated" },
-  { id: "q5", title: "Partner NDA — MediaGroup plc",         counterparty: "MediaGroup plc",       type: "Mutual NDA",         risk: "Amber" as const, route: "Lawyer quick review",       issue: "Publicity rights, no survival clause", saved: "14 min", age: "2d ago",   status: "Reviewed"  },
+interface QueueRow {
+  id: string;
+  contractId: string | undefined;
+  title: string;
+  counterparty: string;
+  type: string;
+  risk: "Green" | "Amber" | "Red";
+  route: string;
+  issue: string;
+  saved: string;
+  age: string;
+  status: string;
+}
+
+const QUEUE_DATA: QueueRow[] = [
+  { id: "q1", contractId: undefined, title: "Mutual NDA — Supplier Co Ltd",         counterparty: "Supplier Co Ltd",     type: "Mutual NDA",         risk: "Green" as const, route: "Batch spot-check",          issue: "None — routine",                       saved: "12 min", age: "2h ago",   status: "Reviewed"  },
+  { id: "q2", contractId: undefined, title: "NDA — TechCorp Inc",                   counterparty: "TechCorp Inc",         type: "Mutual NDA",         risk: "Amber" as const, route: "Lawyer quick review",       issue: "Governing Law: California",            saved: "15 min", age: "4h ago",   status: "Reviewed"  },
+  { id: "q3", contractId: undefined, title: "SaaS Order Form — DataSoft Solutions", counterparty: "DataSoft Solutions",   type: "Customer Order Form",risk: "Amber" as const, route: "Commercial/legal review",   issue: "Auto-renewal, net 90 payment",         saved: "18 min", age: "Yesterday",status: "Reviewed"  },
+  { id: "q4", contractId: undefined, title: "Enterprise SaaS — CloudBase Corp",     counterparty: "CloudBase Corp",       type: "Customer Order Form",risk: "Red"   as const, route: "Full legal review",         issue: "Uncapped liability, broad indemnity",  saved: "22 min", age: "Yesterday",status: "Escalated" },
+  { id: "q5", contractId: undefined, title: "Partner NDA — MediaGroup plc",         counterparty: "MediaGroup plc",       type: "Mutual NDA",         risk: "Amber" as const, route: "Lawyer quick review",       issue: "Publicity rights, no survival clause", saved: "14 min", age: "2d ago",   status: "Reviewed"  },
 ];
 
 const STATUS_STYLE: Record<string, string> = {
@@ -182,7 +198,7 @@ function StatCard({ label, value, sub, accent = false, variant = "line", ringPct
 
 /* ── Dashboard ────────────────────────────────────────────────────────── */
 
-export default function Dashboard({ contracts, reviews, humanDecisions: _humanDecisions, onNavigate, onLoadDemo }: DashboardProps) {
+export default function Dashboard({ contracts, reviews, humanDecisions: _humanDecisions, onNavigate, onLoadDemo, onOpenReview, onOpenDraft }: DashboardProps) {
   const totalReviewed = reviews.length;
   const timeSavedMin = reviews.reduce((a, r) => a + r.estimatedTimeSavedMinutes, 0);
   const timeSaved = timeSavedMin >= 60 ? `${(timeSavedMin / 60).toFixed(1)}h` : timeSavedMin > 0 ? `${timeSavedMin}m` : "—";
@@ -197,7 +213,8 @@ export default function Dashboard({ contracts, reviews, humanDecisions: _humanDe
   const liveQueue = reviews.slice(-5).reverse().map(r => {
     const c = contracts.find(x => x.id === r.contractId);
     return {
-      id: r.id,
+      id: r.id,           // review ID — used to open Review Results
+      contractId: c?.id,  // contract ID — used to open Draft
       title: c?.title ?? "Unknown",
       counterparty: c?.counterparty ?? "—",
       type: c?.contractType ?? "—",
@@ -210,7 +227,20 @@ export default function Dashboard({ contracts, reviews, humanDecisions: _humanDe
     };
   });
 
+  /* Static demo rows carry no real review IDs; clicking them goes to New Review */
   const displayQueue = liveQueue.length > 0 ? liveQueue : QUEUE_DATA;
+
+  function handleRowClick(row: typeof displayQueue[number]) {
+    const isReviewed = row.status === "Reviewed" || row.status === "Escalated";
+    if (isReviewed && row.id && !row.id.startsWith("q")) {
+      // real review ID from liveQueue
+      onOpenReview(row.id);
+    } else if (row.contractId) {
+      onOpenDraft(row.contractId);
+    } else {
+      onNavigate("new-review");
+    }
+  }
 
   return (
     <div className="w-full px-4 sm:px-6 lg:px-8 py-8">
@@ -311,7 +341,7 @@ export default function Dashboard({ contracts, reviews, humanDecisions: _humanDe
                       borderBottom: "1px solid var(--cc-border)",
                       transition: "background 120ms",
                     }}
-                    onClick={() => onNavigate("new-review")}
+                    onClick={() => handleRowClick(row)}
                     onMouseEnter={e => (e.currentTarget.style.background = "rgba(11,43,38,0.55)")}
                     onMouseLeave={e => (e.currentTarget.style.background = "")}
                   >
@@ -335,7 +365,8 @@ export default function Dashboard({ contracts, reviews, humanDecisions: _humanDe
                     <button
                       className="w-7 h-7 flex items-center justify-center rounded-lg transition-colors"
                       style={{ background: "var(--cc-surface-raised)", color: "var(--cc-text-soft)", border: "1px solid var(--cc-border)" }}
-                      onClick={e => { e.stopPropagation(); onNavigate("review-results"); }}
+                      aria-label="Open review"
+                      onClick={e => { e.stopPropagation(); handleRowClick(row); }}
                     >
                       <ChevronRight size={12} />
                     </button>

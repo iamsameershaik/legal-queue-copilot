@@ -1,16 +1,19 @@
 import { useState } from "react";
 import {
   CheckCircle, XCircle, AlertTriangle, ArrowUpRight,
-  Copy, Check, ChevronDown, ChevronUp,
+  Copy, Check, ChevronDown, ChevronUp, LayoutDashboard, FilePlus,
 } from "lucide-react";
 import { Contract, Review, Finding, SuggestedRedline, HumanDecision, DecisionType } from "../types";
 import { RiskBadge, SeverityBadge } from "../components/RiskBadge";
+import BrandMark from "../components/BrandMark";
+import { Page } from "../components/Layout";
 
 interface ReviewResultsProps {
   contract: Contract | null;
   review: Review | null;
   onDecision: (d: Omit<HumanDecision, "id" | "createdAt">) => void;
   decisions: HumanDecision[];
+  onNavigate: (page: Page) => void;
 }
 
 function CopyBtn({ text }: { text: string }) {
@@ -275,12 +278,53 @@ function RightSidebar({ review, contract }: { review: Review; contract: Contract
   );
 }
 
-export default function ReviewResults({ contract, review, onDecision, decisions }: ReviewResultsProps) {
+export default function ReviewResults({ contract, review, onDecision, decisions, onNavigate }: ReviewResultsProps) {
   if (!contract || !review) {
     return (
-      <div className="flex items-center justify-center h-full p-8">
-        <div className="text-center">
-          <p className="text-[14px] text-[#566B76]">No review available. Run a first-pass review to see results here.</p>
+      <div className="w-full px-4 sm:px-6 lg:px-8 py-8 flex items-center justify-center min-h-[60vh]">
+        <div
+          className="max-w-md w-full rounded-2xl p-8 text-center"
+          style={{
+            background: "var(--cc-surface)",
+            border: "1px solid var(--cc-border)",
+            boxShadow: "0 4px 32px rgba(3,19,20,0.4)",
+          }}
+        >
+          {/* Brand mark */}
+          <div className="flex justify-center mb-5">
+            <div style={{ filter: "drop-shadow(0 0 12px rgba(22,199,132,0.20))", opacity: 0.7 }}>
+              <BrandMark size={48} />
+            </div>
+          </div>
+
+          <h2 className="text-[17px] font-semibold mb-2" style={{ color: "var(--cc-text)" }}>
+            No review selected
+          </h2>
+          <p className="text-[13px] leading-relaxed mb-6" style={{ color: "var(--cc-text-soft)" }}>
+            Select a reviewed contract from Command Centre or run a new first-pass review.
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <button
+              className="btn-secondary"
+              onClick={() => onNavigate("dashboard")}
+            >
+              <LayoutDashboard size={13} /> Command Centre
+            </button>
+            <button
+              className="btn-primary"
+              onClick={() => onNavigate("new-review")}
+            >
+              <FilePlus size={13} /> Start New Review
+            </button>
+          </div>
+
+          <p
+            className="text-[10.5px] mt-6 leading-relaxed"
+            style={{ color: "var(--cc-text-soft)", opacity: 0.55 }}
+          >
+            First-pass triage only. Human approval required before any external redline is sent.
+          </p>
         </div>
       </div>
     );

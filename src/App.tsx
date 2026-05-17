@@ -75,6 +75,17 @@ export default function App() {
     });
   }
 
+  /* Open a specific review by ID — called by Dashboard queue rows */
+  const handleOpenReview = useCallback((reviewId: string) => {
+    setActiveReviewId(reviewId);
+    setPage("review-results");
+  }, []);
+
+  /* Open a draft contract — routes to New Review page */
+  const handleOpenDraft = useCallback((_contractId: string) => {
+    setPage("new-review");
+  }, []);
+
   const handleNewReview = useCallback(
     async (contract: Contract) => {
       setIsProcessing(true);
@@ -119,15 +130,23 @@ export default function App() {
         newReviews.push(review);
       }
 
+      /* Mark all demo contracts as Reviewed since we ran reviews for each */
+      const reviewedContracts = newContracts.map((c) => ({
+        ...c,
+        status: "Reviewed" as const,
+      }));
+
       updateStore((s) => ({
         ...s,
-        contracts: [...s.contracts, ...newContracts],
+        contracts: [...s.contracts, ...reviewedContracts],
         reviews: [...s.reviews, ...newReviews],
       }));
 
       if (newContracts.length > 0 && newReviews.length > 0) {
-        setActiveContractId(newContracts[newContracts.length - 1].id);
-        setActiveReviewId(newReviews[newReviews.length - 1].id);
+        const lastContract = newContracts[newContracts.length - 1];
+        const lastReview = newReviews[newReviews.length - 1];
+        setActiveContractId(lastContract.id);
+        setActiveReviewId(lastReview.id);
       }
     } finally {
       setIsProcessing(false);
@@ -179,8 +198,16 @@ export default function App() {
     }));
   }, []);
 
-  const activeContract = store.contracts.find((c) => c.id === activeContractId) ?? null;
+  /*
+   * Derive the active contract from activeContractId, falling back to
+   * looking it up via the active review's contractId. This handles the case
+   * where a user opens a review from the queue (setting activeReviewId) without
+   * explicitly setting activeContractId.
+   */
   const activeReview = store.reviews.find((r) => r.id === activeReviewId) ?? null;
+  const activeContract =
+    store.contracts.find((c) => c.id === activeContractId) ??
+    (activeReview ? (store.contracts.find((c) => c.id === activeReview.contractId) ?? null) : null);
 
   function renderPage() {
     switch (page) {
@@ -192,6 +219,8 @@ export default function App() {
             humanDecisions={store.humanDecisions}
             onNavigate={setPage}
             onLoadDemo={handleLoadDemo}
+            onOpenReview={handleOpenReview}
+            onOpenDraft={handleOpenDraft}
           />
         );
       case "new-review":
@@ -203,6 +232,7 @@ export default function App() {
             review={activeReview}
             onDecision={handleDecision}
             decisions={store.humanDecisions}
+            onNavigate={setPage}
           />
         );
       case "playbook":
