@@ -1,10 +1,11 @@
-import { useState, useRef } from "react";
-import { Upload, Loader2, Zap, AlertCircle, ChevronRight, Check } from "lucide-react";
+import { useState, useRef, useMemo } from "react";
+import { Upload, Loader2, Zap, AlertCircle, ChevronRight, Check, ShieldCheck, ShieldAlert, ShieldX } from "lucide-react";
 import { Contract, ContractType, Urgency } from "../types";
 import {
   sampleStandardNDA, sampleRiskyNDA, sampleOrderForm,
   sampleEnterpriseOrderForm, samplePartnerNDA,
 } from "../data/sampleContracts";
+import { classifyContractInput, ContractPreflightResult } from "../services/contractPreflight";
 
 let _cid = 1;
 function newId() { return `contract-${Date.now()}-${_cid++}`; }
@@ -32,6 +33,135 @@ const REVIEW_STEPS = [
   { n: 5, label: "Handover trail",  sub: "Decisions logged" },
 ];
 
+function PreflightCard({ result }: { result: ContractPreflightResult }) {
+  const cfg = {
+    accept: {
+      icon: <ShieldCheck size={15} />,
+      borderColor: "rgba(22,199,132,0.25)",
+      bg: "rgba(22,199,132,0.05)",
+      headerColor: "#16C784",
+      pillCls: "pill pill-green",
+    },
+    warn: {
+      icon: <ShieldAlert size={15} />,
+      borderColor: "rgba(245,166,35,0.25)",
+      bg: "rgba(245,166,35,0.05)",
+      headerColor: "#F5A623",
+      pillCls: "pill pill-amber",
+    },
+    reject: {
+      icon: <ShieldX size={15} />,
+      borderColor: "rgba(245,101,101,0.25)",
+      bg: "rgba(245,101,101,0.05)",
+      headerColor: "#F56565",
+      pillCls: "pill pill-red",
+    },
+  }[result.status];
+
+  const statusLabel = { accept: "Intake ready", warn: "Incomplete", reject: "Not a contract" }[result.status];
+
+  return (
+    <div
+      className="rounded-2xl p-4 mb-4"
+      style={{ background: cfg.bg, border: `1px solid ${cfg.borderColor}` }}
+    >
+      {/* Header */}
+      <div className="flex items-start justify-between gap-3 mb-2">
+        <div className="flex items-center gap-2" style={{ color: cfg.headerColor }}>
+          {cfg.icon}
+          <p className="text-[13px] font-semibold" style={{ color: cfg.headerColor }}>
+            {result.title}
+          </p>
+        </div>
+        <span className={cfg.pillCls} style={{ fontSize: "10px", flexShrink: 0 }}>
+          {statusLabel}
+        </span>
+      </div>
+
+      {/* Message */}
+      <p className="text-[12px] text-[#8FA3AE] leading-relaxed mb-3">{result.message}</p>
+
+      {/* Reasons */}
+      {result.reasons.length > 0 && (
+        <ul className="space-y-1 mb-3">
+          {result.reasons.map((r, i) => (
+            <li key={i} className="flex items-start gap-1.5 text-[11px] text-[#566B76]">
+              <span className="mt-0.5 flex-shrink-0" style={{ color: cfg.headerColor }}>–</span>
+              {r}
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {/* Detected signals */}
+      {result.detectedSignals.length > 0 && (
+        <div className="mb-3">
+          <p className="text-[10px] font-semibold text-[#566B76] uppercase tracking-wide mb-1.5">
+            Detected signals
+          </p>
+          <div className="flex flex-wrap gap-1">
+            {result.detectedSignals.slice(0, 8).map((s) => (
+              <span
+                key={s}
+                className="text-[10px] px-2 py-0.5 rounded-full"
+                style={{
+                  background: "rgba(22,199,132,0.08)",
+                  color: "#16C784",
+                  border: "1px solid rgba(22,199,132,0.15)",
+                }}
+              >
+                {s}
+              </span>
+            ))}
+            {result.detectedSignals.length > 8 && (
+              <span className="text-[10px] text-[#566B76]">
+                +{result.detectedSignals.length - 8} more
+              </span>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Missing signals — only for warn/reject */}
+      {result.missingSignals.length > 0 && (
+        <div className="mb-3">
+          <p className="text-[10px] font-semibold text-[#566B76] uppercase tracking-wide mb-1.5">
+            Not detected
+          </p>
+          <div className="flex flex-wrap gap-1">
+            {result.missingSignals.map((s) => (
+              <span
+                key={s}
+                className="text-[10px] px-2 py-0.5 rounded-full"
+                style={{
+                  background: "rgba(245,101,101,0.07)",
+                  color: "#F87171",
+                  border: "1px solid rgba(245,101,101,0.15)",
+                }}
+              >
+                {s}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Recommended action */}
+      {result.status !== "accept" && (
+        <div
+          className="flex items-start gap-2 pt-2.5 mt-1"
+          style={{ borderTop: `1px solid ${cfg.borderColor}` }}
+        >
+          <AlertCircle size={11} className="flex-shrink-0 mt-0.5" style={{ color: cfg.headerColor }} />
+          <p className="text-[11px] leading-relaxed" style={{ color: "#8FA3AE" }}>
+            {result.recommendedAction}
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function NewReview({ onSubmit, isProcessing }: NewReviewProps) {
   const [title, setTitle] = useState("");
   const [counterparty, setCounterparty] = useState("");
@@ -43,6 +173,12 @@ export default function NewReview({ onSubmit, isProcessing }: NewReviewProps) {
   const [error, setError] = useState<string | null>(null);
   const [activeStep, setActiveStep] = useState(1);
   const fileRef = useRef<HTMLInputElement>(null);
+
+  /* Live preflight classification — runs whenever contract text or type changes */
+  const preflight = useMemo<ContractPreflightResult | null>(() => {
+    if (!text.trim()) return null;
+    return classifyContractInput(text, { contractType });
+  }, [text, contractType]);
 
   function loadSample(s: typeof SAMPLES[0]) {
     setTitle(s.title); setCounterparty(s.counterparty); setContractType(s.type);
@@ -67,6 +203,14 @@ export default function NewReview({ onSubmit, isProcessing }: NewReviewProps) {
     if (!title.trim()) { setError("Please enter a contract title."); return; }
     if (!counterparty.trim()) { setError("Please enter the counterparty name."); return; }
     if (!text.trim()) { setError("Please paste the contract text."); return; }
+
+    /* Hard guardrail — re-classify immediately before calling the review engine */
+    const latestPreflight = classifyContractInput(text, { contractType });
+    if (latestPreflight.status === "reject") {
+      setError(latestPreflight.message);
+      return;
+    }
+
     setError(null); setActiveStep(2);
     await onSubmit({ id: newId(), title: title.trim(), counterparty: counterparty.trim(), contractType, urgency, commercialContext: context.trim(), contractText: text.trim(), fileName, status: "Draft", createdAt: new Date().toISOString() });
   }
@@ -192,6 +336,9 @@ export default function NewReview({ onSubmit, isProcessing }: NewReviewProps) {
             />
           </div>
 
+          {/* Live preflight classification result */}
+          {preflight && <PreflightCard result={preflight} />}
+
           {error && (
             <div
               className="flex items-center gap-2 text-[13px] rounded-xl px-4 py-3 mb-4"
@@ -210,7 +357,12 @@ export default function NewReview({ onSubmit, isProcessing }: NewReviewProps) {
             >
               Clear form
             </button>
-            <button onClick={handleSubmit} disabled={isProcessing} className="btn-primary">
+            <button
+              onClick={handleSubmit}
+              disabled={isProcessing || preflight?.status === "reject"}
+              className="btn-primary"
+              title={preflight?.status === "reject" ? preflight.title : undefined}
+            >
               {isProcessing
                 ? <><Loader2 size={13} className="animate-spin" /> Running review…</>
                 : <><Zap size={13} /> Run first-pass review</>}
