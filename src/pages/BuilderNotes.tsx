@@ -17,7 +17,7 @@ const TIMELINE = [
   {
     tag: "v1 · Sprint",
     title: "PortSwigger AI Pioneer take-home",
-    desc: "One-week sprint to prototype AI-assisted first-pass legal triage. Delivered a working review engine, playbook with 10 rules, Green/Amber/Red routing, human decision controls, and eval dashboard.",
+    desc: "Two-week sprint to prototype AI-assisted first-pass legal triage. Delivered a working review engine, playbook with 10 rules, Green/Amber/Red routing, human decision controls, and eval dashboard.",
   },
   {
     tag: "v2 · UI",
