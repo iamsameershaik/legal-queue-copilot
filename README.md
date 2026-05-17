@@ -1,6 +1,6 @@
-# ClauseCompass
+# ClauseCompass v2
 
-First-pass legal triage.
+AI-assisted, human-in-the-loop first-pass legal triage for routine commercial contracts.
 
 ---
 
@@ -8,96 +8,178 @@ First-pass legal triage.
 |---|---|
 | **Live demo** | https://clausecompass.netlify.app/ |
 | **Video walkthrough** | https://drive.google.com/file/d/1glA6a2GmQRi32N1jdMaqJXCDnUl7dNwb/view |
-| **GitHub repo** | https://github.com/iamsameershaik/legal-queue-copilot |
+| **GitHub** | https://github.com/iamsameershaik/legal-queue-copilot |
+
+---
+
+> **Note:** The walkthrough video shows the original v1 PortSwigger AI Pioneer take-home submission.
+> The live app and current repository have since been extended into **ClauseCompass v2**, which adds
+> contract intake guardrails, evidence-grounded outputs with citation and provenance metadata, a
+> citation coverage verifier, and a governance-focused Handover Lab. The core workflow and safety
+> boundaries are unchanged.
 
 ---
 
 ## Why this exists
 
-Small in-house legal teams receive a steady stream of repetitive low-risk commercial contracts — mutual NDAs, customer order forms, vendor agreements. Most are mostly boilerplate, but each still requires human review before signing.
+Small in-house legal teams receive a steady stream of repetitive low-risk commercial contracts —
+mutual NDAs, customer order forms, vendor agreements, SaaS terms. Most are mostly boilerplate, but
+each still requires human review before signing.
 
-ClauseCompass demonstrates how AI can reduce the repetitive first-pass component of that workflow while keeping legal judgment and approval entirely with humans. The goal is faster triage, not autonomous approval.
+ClauseCompass demonstrates how AI-assisted tooling can reduce the repetitive first-pass component
+of that workflow while keeping legal judgment, approval, and external redline sign-off entirely with
+humans. The goal is faster triage, not autonomous approval.
 
 ---
 
-## What I built
+## What ClauseCompass v2 does
 
-A working prototype that:
+ClauseCompass accepts contract text, applies a structured legal playbook, and returns:
 
-- Accepts contract text (paste or .txt/.md upload)
-- Applies a structured legal playbook with 10 clause-level rules
-- Classifies contract risk as **Green / Amber / Red**
-- Explains the routing decision and surfaces clause-level findings
-- Suggests fallback wording and tracked redlines for negotiation
-- Captures human decisions (Accept / Edit / Reject / Escalate) per finding
-- Shows a transparent evaluation dashboard with realistic metrics
-- Includes a handover plan and launch-readiness score
+- a **Green / Amber / Red** risk routing decision with explanation
+- **clause-level findings** grounded in evidence from the submitted contract
+- **suggested redline** wording for each at-risk clause, based on playbook fallback positions
+- a **human decision prompt** (Accept / Edit / Reject / Escalate) for every finding
+- a **governance and handover summary** showing launch readiness and production blockers
+
+It covers: mutual NDAs, customer order forms, vendor agreements, SaaS agreements, and other
+boilerplate-heavy commercial contracts.
+
+It does not: autonomously approve contracts, produce legal advice, or send redlines without human
+review and sign-off.
 
 ---
 
 ## Core workflow
 
-1. Intake contract (text paste or file upload)
-2. Apply playbook — 10 rules checked across governing law, liability, indemnity, data protection, and more
-3. Route **Green** (batch spot-check), **Amber** (quick lawyer review), or **Red** (full legal review)
-4. Explain why — clause-level findings with evidence from contract text
-5. Suggest redlines — side-by-side current vs. fallback wording
-6. Human accepts / edits / rejects / escalates each finding
-7. Decisions logged to evaluation and handover trail
+```
+1. Contract intake     → paste text or upload .txt / .md file
+2. Preflight guardrail → classify input: accept / warn / reject before review
+3. Playbook review     → 10 clause rules checked (governing law, liability, indemnity, data
+                         protection, assignment, auto-renewal, confidentiality, payment terms,
+                         publicity rights, security obligations)
+4. Risk routing        → Green (batch spot-check) / Amber (quick lawyer review) / Red (full
+                         legal review required)
+5. Findings + evidence → clause-level findings with contract citations and playbook citations
+6. Redline suggestions → current wording vs. fallback wording, with provenance metadata
+7. Human decisions     → Accept / Edit / Reject / Escalate per finding; decisions logged
+8. Handover Lab        → readiness scores, governance matrix, production blockers, adoption plan
+```
 
 ---
 
-## Key features
+## v2 feature highlights
 
-- **Command Centre** — contract queue with risk, route, top issue, and time-saved at a glance
-- **Playbook-based review** — 10 configurable clause rules with preferred positions, fallbacks, and escalation triggers
-- **Clause-level findings** — detected position, playbook rule, recommendation, and business impact per clause
-- **Suggested redlines** — side-by-side wording comparison; copy to clipboard; human approval required before sending
-- **Human decision controls** — Accept / Edit / Reject / Escalate per finding; decisions logged
-- **Evaluation dashboard** — 87.5% pass rate, realistic false positive/negative tracking across 8 synthetic scenarios
-- **Handover readiness** — 72% score, week-two plan, activity trail, deployment checklist
-- **Demo mode** — 5 sample contracts covering standard NDA, risky NDA, order form, enterprise SaaS, and partner NDA
-- **Supabase-ready** — schema and RLS policies applied; localStorage used as prototype persistence layer
-- **Netlify-ready** — Vite build, SPA redirect rule, clean production bundle
+| Area | Feature | Status |
+|---|---|---|
+| UI | Vite + React + TypeScript, crypto-green command-centre interface | Complete |
+| Intake | Contract Intake Guardrail — deterministic preflight classifier | Complete |
+| Intake | Preflight test fixtures with accept / warn / reject paths | Complete |
+| Review | Deterministic review engine — 12 risk signals, regex-matched | Complete |
+| Review | Structured playbook — 10 rules with preferred positions, fallbacks, escalation triggers | Complete |
+| Review | Green / Amber / Red routing with routing rationale | Complete |
+| Evidence | Contract citations on every finding and redline | Complete |
+| Evidence | Playbook citations with evidence strength | Complete |
+| Evidence | Provenance metadata (detectionType, ruleId, matchedSignals) | Complete |
+| Evidence | Legal-reference status and authority status per finding | Complete |
+| Evidence | Citation coverage eval — automated verifier, 0 fabricated URLs | Complete |
+| Controls | Human decision controls — Accept / Edit / Reject / Escalate | Complete |
+| Controls | Human approval required before any external redline | Complete |
+| Governance | Handover Lab — readiness scores, control coverage, blockers, governance matrix | Complete |
+| Persistence | localStorage prototype persistence | Complete |
+| Backend | Supabase schema + RLS policies applied; client wired | Complete |
+| Deploy | Netlify — Vite SPA build, `_redirects` rule | Complete |
+| Parsing | DOCX / PDF ingestion | Not yet |
+| Export | Word redline export with tracked changes | Not yet |
+| LLM | Real LLM / Edge Function integration | Not yet |
+| Auth | Reviewer roles, auth, multi-reviewer workflow | Not yet |
 
 ---
 
 ## Safety boundaries
 
-- This is **not legal advice**
-- The system **does not approve contracts autonomously**
-- **Human approval is required** before any external redline is sent
-- **Red routes require full legal review** — the tool does not proceed without legal sign-off
-- **False negatives are the primary risk metric** — missing a material issue is treated as more dangerous than over-escalation
-- **The synthetic playbook must be reviewed and replaced** by Legal-approved positions before any production use
+- **Not legal advice.** ClauseCompass is a triage prototype. Nothing it produces constitutes legal advice.
+- **No autonomous approval.** The system does not approve, sign, or send contracts.
+- **Human review required** before any suggested redline is shared externally.
+- **Red routes require full legal review** — the tool explicitly blocks proceeding without sign-off.
+- **False negatives are the primary risk metric.** Missing a material clause is treated as more
+  dangerous than over-escalation.
+- **The synthetic playbook is not legal-approved.** It must be reviewed and replaced by qualified
+  legal stakeholders before any production use.
 
 ---
 
-## Evaluation approach
+## Evidence & authority layer
 
-Initial eval suite across 8 synthetic legal scenarios.
+Every finding and redline in v2 carries structured evidence:
 
-Tracks:
-- Risk routing accuracy (Green/Amber/Red)
-- Issue detection rate
-- False positives (unexpected flags)
-- False negatives (missed material issues)
-- Partial passes (detected but miscalibrated)
-- Suggested redline usefulness
-- Time saved hypothesis
+**Contract citation** — the matched excerpt from the submitted contract, with character range,
+evidence strength (`direct` / `ambiguous` / `missing`), and detection type.
 
-**Current metrics (v0 deterministic engine):**
+**Playbook citation** — the specific playbook rule that triggered the finding, including preferred
+position, acceptable fallback, and escalation trigger.
 
-| Metric | Value |
+**Provenance metadata** — detector type, rule ID, matched signals, and text range for every output.
+
+**Legal-reference status** — each finding is marked `not-added` (external authority structurally
+supported but not yet curated) or `not-applicable`. No external legal URLs are generated or
+fabricated by the engine.
+
+**Authority status** — each finding is marked `external-authority-not-added` or `playbook-grounded`
+depending on clause type.
+
+A citation coverage verifier (`runCitationEval`) checks all of the above automatically across 5
+sample contracts on every run.
+
+---
+
+## Contract Intake Guardrail
+
+Before a contract enters the review queue it passes a deterministic preflight classifier:
+
+| Outcome | Meaning |
 |---|---|
-| Eval pass rate | 87.5% |
-| Risk routing accuracy | 87.5% |
-| Issue detection | 82% |
-| False positives | 1 |
-| False negatives | 1 |
-| Partial passes | 2 |
+| `accept` | Input looks like a valid commercial contract — proceed to review |
+| `warn` | Input accepted with caveats (e.g. short text, unusual structure) |
+| `reject` | Input does not meet minimum quality bar — reason surfaced to user |
 
-A production eval set of 30–50 labelled historical contracts is required before deployment.
+Rejection reasons include: empty input, non-contract text (emails, code, CVs), contracts outside
+supported scope, and inputs that are too short to review reliably.
+
+A fixture-based eval (`runContractPreflightEval`) verifies all paths automatically.
+
+---
+
+## Evaluation and verification
+
+| Check | Current result | Notes |
+|---|---|---|
+| Preflight guardrail fixtures | 17/18 · 94% pass rate | 18 synthetic test cases |
+| Citation coverage | 100% · 128/128 checks | 5 sample contracts, 16 findings, 16 redlines |
+| Fabricated legal refs | 0 | No external URLs generated |
+| Synthetic review eval | 87.5% pass rate | 8 labelled scenarios |
+| False negatives | 1 (current sample eval) | Primary safety metric |
+| Historical validation | Not yet | 30–50 labelled real contracts required |
+
+**The primary risk metric is false negatives.** Missing a material legal issue is more dangerous
+than over-escalation. Current false negative count is within acceptable range for a deterministic
+prototype engine, but must be validated against real contracts before production use.
+
+---
+
+## Handover Lab
+
+The Handover Lab page summarises governance readiness for a legal-ops or AI-governance stakeholder:
+
+- **Two readiness scores** — prototype readiness (v2 portfolio maturity) and production readiness
+  (controls still required before real deployment)
+- **Control coverage** — 12 controls with Complete / Not yet status and live metrics
+- **Production blockers** — severity, owner, and next action for each outstanding requirement
+- **Eval & safety metrics** — live preflight and citation eval figures
+- **Governance matrix** — 8 governance areas with current state, production requirement, and status
+- **Reviewer activity trail** — live or seeded review and decision events
+- **Week-two adoption plan** — 10-step sequence with owners and success signals
+- **Scope governance note** — playbook scope, critical rules, and UI selector design intent
 
 ---
 
@@ -105,20 +187,19 @@ A production eval set of 30–50 labelled historical contracts is required befor
 
 | Layer | Technology |
 |---|---|
-| Frontend | Vite + React 18 + TypeScript |
-| Styling | Tailwind CSS + CSS custom properties |
-| Persistence | localStorage (prototype) · Supabase (schema applied, client wired) |
-| Review engine | Deterministic regex-based mock engine |
-| Future LLM integration | Supabase Edge Function or serverless proxy |
-| Deployment | Netlify (Vite SPA, `dist/`, `_redirects`) |
+| Frontend | Vite 5 + React 18 + TypeScript |
+| Styling | Tailwind CSS + CSS custom properties (v2 design token system) |
+| Review engine | Deterministic regex-signal engine — inspectable, auditable, no API keys |
+| Persistence | localStorage (prototype) · Supabase (schema applied, RLS policies, client wired) |
+| Evals | `runContractPreflightEval()` · `runCitationEval()` — run synchronously in-browser |
+| LLM integration | Not yet — Edge Function stub present for future proxy |
+| Deployment | Netlify (Vite SPA, `dist/`, `public/_redirects`) |
 
----
-
-## Why the mock engine exists
-
-The prototype uses a deterministic rule-based review engine so the demo is reliable, inspectable, and safe without exposing API keys in the frontend. Every output is predictable and auditable.
-
-A production version would call an LLM through a server-side function, validate the structured output against a strict schema, and log inputs/outputs for audit. The client would never hold API keys.
+**Why the deterministic engine:** The prototype uses a regex-based rule engine so the demo is
+reliable, inspectable, and safe without exposing API keys in the frontend. Every output is
+predictable and auditable. A production version would call an LLM through a server-side Edge
+Function, validate structured output against a strict schema, and log inputs and outputs for audit.
+The client would never hold API keys.
 
 ---
 
@@ -129,12 +210,16 @@ npm install
 npm run dev
 ```
 
+Requires a `.env` file — copy `.env.example` and fill in Supabase credentials if using the
+Supabase client. The prototype works without Supabase using localStorage only.
+
 ---
 
 ## Build
 
 ```bash
-npm run build
+npm run build      # production bundle to dist/
+npm run typecheck  # TypeScript check without emit
 ```
 
 ---
@@ -150,52 +235,67 @@ npm run build
 
 ---
 
-## What I would do in week two
+## Production readiness gaps
 
-1. Shadow 3–5 real legal reviews to map the actual workflow
+The following are required before ClauseCompass could be used in a real legal workflow:
+
+| Gap | Status |
+|---|---|
+| Legal-approved playbook | Not yet — synthetic rules only |
+| Historical contract validation set | Not yet — 30–50 labelled contracts required |
+| DOCX / PDF parsing | Not yet — plain text input only |
+| Word redline export (tracked changes) | Not yet — UI only |
+| Real LLM integration | Not yet — Edge Function stub present |
+| Auth and reviewer roles | Not yet — single-session demo |
+| External legal authority curation | Not yet — structurally supported, not curated |
+| Legal sign-off | Not yet — required before any deployment |
+
+---
+
+## What I would do next
+
+1. Shadow 3–5 real legal reviews — map workflow gaps and edge cases the prototype does not handle
 2. Replace the synthetic playbook with Legal-approved clause positions
-3. Evaluate against 30–50 historical contracts; track false negatives by clause type
-4. Measure time saved against a manual first-pass baseline
-5. Add DOCX/PDF parsing via Edge Function
+3. Build a 30–50 contract labelled eval set covering NDA and Order Form types
+4. Track false negatives by clause type across the labelled set
+5. Add DOCX/PDF ingestion via Supabase Edge Function
 6. Add Word redline export with tracked changes
-7. Integrate with legal intake email, Slack workflow, or ticketing system
-8. Create an adoption guide and structured feedback loop for the legal team
+7. Add reviewer roles and an approval workflow with a persisted audit trail
+8. Run a controlled pilot with the legal team on real (non-sensitive) contracts
+9. Collect reviewer disagreement and override data to improve calibration
+10. Update playbook based on the feedback loop; version-control each change
 
 ---
 
-## Known limitations
+## Submission and portfolio context
 
-- Synthetic sample contracts — real drafting variance will differ
-- Deterministic mock engine — no LLM yet
-- No legal sign-off on the playbook
-- No DOCX/PDF parsing
-- No Word tracked-changes export
-- Single-user demo mode — no auth or multi-reviewer workflow
-- Not production legal advice under any circumstances
+ClauseCompass was originally built as a take-home prototype for the PortSwigger AI Pioneer
+programme — a two-week sprint to demonstrate how AI could accelerate routine legal review for an
+in-house team.
 
----
-
-## Submission artefacts
-
-See the `/docs` folder:
+The `/docs` folder contains the original v1 submission artefacts:
 
 | File | Contents |
 |---|---|
-| `01_README_START_HERE.md` | Reviewer onboarding and review path |
-| `02_AI_PIONEER_SPRINT_BRIEF.md` | Two-week sprint framing and discovery questions |
-| `03_LIVE_DEMO_AND_VIDEO_LINKS.md` | Links, deploy notes, demo script |
+| `01_README_START_HERE.md` | Reviewer onboarding |
+| `02_AI_PIONEER_SPRINT_BRIEF.md` | Sprint framing and discovery questions |
+| `03_LIVE_DEMO_AND_VIDEO_LINKS.md` | Links and demo script |
 | `04_ARCHITECTURE_AND_DATA_FLOW.md` | System design and data flow |
-| `05_SAMPLE_LEGAL_PLAYBOOK.md` | All 10 playbook rules documented |
+| `05_SAMPLE_LEGAL_PLAYBOOK.md` | All 10 playbook rules |
 | `06_EVAL_REPORT.md` | Full evaluation with test cases and metrics |
-| `07_HANDOVER_RUNBOOK.md` | How a legal team would adopt this tool |
+| `07_HANDOVER_RUNBOOK.md` | Legal team adoption plan |
 | `08_ASSUMPTIONS_LIMITATIONS_AND_NEXT_STEPS.md` | Honest scope and production path |
-| `09_PROMPTS_USED.md` | Prompts used to build this — artefact trail |
-| `10_SUBMISSION_CHECKLIST.md` | Pre-submission verification checklist |
+| `09_PROMPTS_USED.md` | Prompts used during build |
+| `10_SUBMISSION_CHECKLIST.md` | Pre-submission verification |
 
-See `/sample-contracts` for the five synthetic contracts used in the demo.
+The repository has since been extended into v2 as a portfolio demonstration of a more complete
+AI-assisted legal workflow. The v1 docs reflect the original sprint scope and have not been updated
+to match v2.
 
-See `/prompts` for cleaned-up versions of the build prompts.
+`/sample-contracts` — five synthetic contracts used in the demo queue.
 
 ---
 
-_Built as a Legal Queue Copilot prototype for the PortSwigger AI Pioneer take-home task. Not production software. Not legal advice._
+_ClauseCompass is a prototype. It is not production software. It is not legal advice. Every output
+requires human review and legal sign-off before external use. The playbook must be reviewed and
+approved by qualified legal stakeholders before any production deployment._
