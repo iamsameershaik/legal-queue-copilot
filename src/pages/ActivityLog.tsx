@@ -195,14 +195,19 @@ function SectionHeader({ icon, title }: { icon: React.ReactNode; title: string }
 
 export default function ActivityLog({ contracts, reviews, humanDecisions, playbookRules }: ActivityLogProps) {
 
-  // Run evals synchronously for live metrics
-  const preflightEval  = runContractPreflightEval();
-  const citationEval   = runCitationEval(reviews.length > 0 ? reviews : undefined);
+  // Run evals synchronously for live metrics.
+  // Citation eval always uses its own sample-contract set (undefined) so that
+  // stale pre-Phase-4 reviews in localStorage do not corrupt the coverage score.
+  const preflightEval = runContractPreflightEval();
+  const citationEval  = runCitationEval(undefined);
 
-  // Readiness score — calculated from completed control count
-  const completedControls = CONTROLS.filter(c => c.status === "complete").length;
-  const totalControls     = CONTROLS.length;
-  const readinessScore    = Math.round((completedControls / totalControls) * 100);
+  // Prototype readiness: measures v2 milestone portfolio completion (static).
+  const PROTOTYPE_READINESS = 82;
+
+  // Production readiness: calculated dynamically from control coverage.
+  const completedControls  = CONTROLS.filter(c => c.status === "complete").length;
+  const totalControls      = CONTROLS.length;
+  const productionReadiness = Math.round((completedControls / totalControls) * 100);
 
   // Live activity events
   type LE = { id: string; ts: string; actor: string; type: string; label: string; sub?: string; risk?: Review["riskLevel"] };
@@ -243,7 +248,7 @@ export default function ActivityLog({ contracts, reviews, humanDecisions, playbo
     { label: "Guardrail fixtures", value: preflightEval.total      },
   ];
 
-  const readinessColor = readinessScore >= 70 ? "#16C784" : readinessScore >= 50 ? "#F59E0B" : "#EF4444";
+  const prodColor = productionReadiness >= 70 ? "#16C784" : productionReadiness >= 50 ? "#F59E0B" : "#EF4444";
 
   return (
     <div className="w-full px-4 sm:px-6 lg:px-8 py-8">
@@ -260,16 +265,34 @@ export default function ActivityLog({ contracts, reviews, humanDecisions, playbo
         style={{ borderColor: "rgba(22,199,132,0.18)" }}
       >
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
-          {/* Score */}
-          <div className="flex-shrink-0 flex flex-col justify-center min-w-[120px]">
-            <p className="meta-label mb-2">Readiness score</p>
-            <p className="font-bold leading-none" style={{ fontSize: 52, color: readinessColor }}>
-              {readinessScore}
-              <span className="text-2xl ml-1" style={{ color: "var(--cc-text-soft)" }}>%</span>
-            </p>
-            <p className="text-[11px] mt-1.5 font-medium" style={{ color: "var(--cc-text-soft)" }}>
-              {completedControls}/{totalControls} controls complete
-            </p>
+          {/* Two-score block */}
+          <div className="flex-shrink-0 flex flex-col sm:flex-row lg:flex-col gap-5 lg:gap-4 min-w-[180px]">
+            {/* Prototype readiness */}
+            <div className="flex-1 lg:flex-none">
+              <p className="meta-label mb-1.5">Prototype readiness</p>
+              <p className="font-bold leading-none" style={{ fontSize: 44, color: "#16C784" }}>
+                {PROTOTYPE_READINESS}
+                <span className="text-xl ml-1" style={{ color: "var(--cc-text-soft)" }}>%</span>
+              </p>
+              <p className="text-[11px] mt-1 leading-snug" style={{ color: "var(--cc-text-soft)" }}>
+                v2 milestone & workflow maturity
+              </p>
+            </div>
+
+            <div className="hidden sm:block lg:hidden" style={{ width: 1, background: "var(--cc-border)", alignSelf: "stretch" }} />
+            <div className="hidden lg:block" style={{ height: 1, background: "var(--cc-border)", width: "100%" }} />
+
+            {/* Production readiness */}
+            <div className="flex-1 lg:flex-none">
+              <p className="meta-label mb-1.5">Production readiness</p>
+              <p className="font-bold leading-none" style={{ fontSize: 44, color: prodColor }}>
+                {productionReadiness}
+                <span className="text-xl ml-1" style={{ color: "var(--cc-text-soft)" }}>%</span>
+              </p>
+              <p className="text-[11px] mt-1 leading-snug" style={{ color: "var(--cc-text-soft)" }}>
+                {completedControls}/{totalControls} controls production-ready
+              </p>
+            </div>
           </div>
 
           <div className="hidden lg:block" style={{ width: 1, background: "var(--cc-border)", alignSelf: "stretch" }} />
@@ -284,10 +307,20 @@ export default function ActivityLog({ contracts, reviews, humanDecisions, playbo
               Ready for controlled legal team pilot — not production legal advice
             </p>
             <p className="text-[12px] leading-relaxed" style={{ color: "var(--cc-text-soft)" }}>
-              Core workflow, guardrails, evidence coverage, and eval checks are in place. Production use
-              still requires a legal-approved playbook, historical contract validation against real documents,
-              and real document parsing before any genuine legal intake.
+              Core workflow, intake guardrails, evidence coverage, citation checks, and handover
+              controls are in place. Production use still requires legal-approved playbook positions,
+              historical contract validation, document parsing, auth, redline export, and legal sign-off.
             </p>
+            <div className="grid grid-cols-2 gap-2 pt-1">
+              <div className="surface-inset p-2.5 rounded-lg">
+                <p className="meta-label mb-1">Prototype readiness measures</p>
+                <p className="text-[11px]" style={{ color: "var(--cc-text-soft)" }}>v2 portfolio and demo workflow maturity across all completed phases</p>
+              </div>
+              <div className="surface-inset p-2.5 rounded-lg">
+                <p className="meta-label mb-1">Production readiness measures</p>
+                <p className="text-[11px]" style={{ color: "var(--cc-text-soft)" }}>Controls still required before real legal deployment ({completedControls}/{totalControls} complete)</p>
+              </div>
+            </div>
           </div>
         </div>
 
