@@ -13,8 +13,6 @@ import {
   sampleStandardNDA,
   sampleRiskyNDA,
   sampleOrderForm,
-  sampleEnterpriseOrderForm,
-  samplePartnerNDA,
 } from "./data/sampleContracts";
 
 let _decisionId = 1;

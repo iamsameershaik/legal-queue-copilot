@@ -74,7 +74,7 @@ export default function NewReview({ onSubmit, isProcessing }: NewReviewProps) {
   const inputCls = "input-field text-sm";
 
   return (
-    <div className="w-full max-w-[1100px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="w-full px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-6">
         <h1 className="page-title mb-1">Start first-pass review</h1>
         <p className="body-text">Submit a contract for AI triage against the legal playbook.</p>

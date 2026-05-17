@@ -1,7 +1,7 @@
 import { useState } from "react";
 import {
   CheckCircle, XCircle, AlertTriangle, ArrowUpRight,
-  Copy, Check, ChevronDown, ChevronUp, Clock, TrendingUp,
+  Copy, Check, ChevronDown, ChevronUp,
 } from "lucide-react";
 import { Contract, Review, Finding, SuggestedRedline, HumanDecision, DecisionType } from "../types";
 import { RiskBadge, SeverityBadge } from "../components/RiskBadge";
@@ -183,11 +183,6 @@ function RightSidebar({ review, contract }: { review: Review; contract: Contract
     Red: `High-severity clauses: ${trigHigh.length > 0 ? trigHigh.join(", ") : "material risk detected"}. Do not proceed without full legal review and sign-off.`,
   };
 
-  const accepted = review.findings.filter(f =>
-    // just show findings count as a proxy for what lawyer needs to check
-    f.severity === "High"
-  );
-
   return (
     <div className="space-y-4">
       {/* Summary */}
@@ -292,7 +287,7 @@ export default function ReviewResults({ contract, review, onDecision, decisions 
   }
 
   return (
-    <div className="w-full max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="w-full px-4 sm:px-6 lg:px-8 py-8">
       {/* Page title */}
       <div className="mb-6">
         <h1 className="page-title mb-1 break-words">{contract.title}</h1>

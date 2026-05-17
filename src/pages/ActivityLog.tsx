@@ -1,8 +1,8 @@
 import { Contract, Review, HumanDecision, PlaybookRule } from "../types";
 import { RiskBadge } from "../components/RiskBadge";
 import {
-  CheckCircle, XCircle, AlertTriangle, Edit3, BookOpen,
-  FileText, ClipboardCheck, Rocket, ChevronRight, Cpu,
+  AlertTriangle, BookOpen,
+  FileText, ClipboardCheck, Rocket, Cpu,
 } from "lucide-react";
 
 interface ActivityLogProps {
@@ -94,7 +94,7 @@ export default function ActivityLog({ contracts, reviews, humanDecisions, playbo
   ];
 
   return (
-    <div className="w-full max-w-[1100px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="w-full px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-6">
         <h1 className="page-title mb-1">Handover</h1>
         <p className="body-text">Launch readiness, activity trail, and week two plan.</p>

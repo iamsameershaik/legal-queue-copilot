@@ -1,4 +1,4 @@
-import { FilePlus, Zap, ChevronRight, Clock, TrendingUp, FileCheck, AlertTriangle } from "lucide-react";
+import { FilePlus, ChevronRight, FileCheck } from "lucide-react";
 import { Contract, Review, HumanDecision } from "../types";
 import { RiskBadge } from "../components/RiskBadge";
 import { Page } from "../components/Layout";
@@ -27,15 +27,20 @@ const STATUS_STYLE: Record<string, string> = {
 
 function MetricCard({ label, value, sub, accent }: { label: string; value: string | number; sub?: string; accent?: boolean }) {
   return (
-    <div className="surface-card p-5">
-      <p className="meta-label mb-2">{label}</p>
-      <p className={`text-2xl font-bold tracking-tight ${accent ? "text-[#16C784]" : "text-[#E8EFF2]"}`}>{value}</p>
-      {sub && <p className="text-xs text-[#566B76] mt-1">{sub}</p>}
+    <div className={`stat-card ${accent ? "stat-card-accent" : ""}`}>
+      <p className="meta-label mb-2.5">{label}</p>
+      <p
+        className="text-[26px] font-bold tracking-tight leading-none mb-1"
+        style={{ color: accent ? "var(--cc-green)" : "var(--cc-text)" }}
+      >
+        {value}
+      </p>
+      {sub && <p className="text-[11px] mt-1.5 leading-relaxed" style={{ color: "var(--cc-text-soft)" }}>{sub}</p>}
     </div>
   );
 }
 
-export default function Dashboard({ contracts, reviews, humanDecisions, onNavigate, onLoadDemo }: DashboardProps) {
+export default function Dashboard({ contracts, reviews, humanDecisions: _humanDecisions, onNavigate, onLoadDemo }: DashboardProps) {
   const totalReviewed = reviews.length;
   const timeSavedMin = reviews.reduce((a, r) => a + r.estimatedTimeSavedMinutes, 0);
   const timeSaved = timeSavedMin >= 60 ? `${(timeSavedMin / 60).toFixed(1)}h` : timeSavedMin > 0 ? `${timeSavedMin}m` : "—";
@@ -66,7 +71,7 @@ export default function Dashboard({ contracts, reviews, humanDecisions, onNaviga
   const displayQueue = liveQueue.length > 0 ? liveQueue : QUEUE_DATA;
 
   return (
-    <div className="w-full max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="w-full px-4 sm:px-6 lg:px-8 py-8">
       {/* Status strip */}
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-8">
         <div>
@@ -74,7 +79,7 @@ export default function Dashboard({ contracts, reviews, humanDecisions, onNaviga
           <p className="body-text">First-pass legal triage for routine commercial contracts.</p>
           <div className="flex items-center gap-2 mt-3 flex-wrap">
             <span className="pill pill-neutral">Demo mode</span>
-            <span className="pill pill-neutral">Mock review engine</span>
+            <span className="pill pill-neutral">Mock engine</span>
             <span className="pill pill-amber">Human approval required</span>
           </div>
         </div>
@@ -112,10 +117,15 @@ export default function Dashboard({ contracts, reviews, humanDecisions, onNaviga
               <div style={{ minWidth: "700px" }}>
                 {/* Table header */}
                 <div
-                  className="grid text-[11px] font-semibold text-[#566B76] uppercase tracking-wider px-4 py-2.5"
+                  className="grid px-4 py-2.5"
                   style={{
                     gridTemplateColumns: "1fr 90px 70px 130px 150px 60px 80px 36px",
-                    borderBottom: "1px solid #131F25",
+                    borderBottom: "1px solid var(--cc-border)",
+                    fontSize: "10.5px",
+                    fontWeight: 600,
+                    color: "var(--cc-text-soft)",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.07em",
                   }}
                 >
                   <span>Contract</span>
@@ -134,29 +144,29 @@ export default function Dashboard({ contracts, reviews, humanDecisions, onNaviga
                     className="grid items-center px-4 py-3 cursor-pointer"
                     style={{
                       gridTemplateColumns: "1fr 90px 70px 130px 150px 60px 80px 36px",
-                      borderBottom: "1px solid #0F1A1F",
+                      borderBottom: "1px solid rgba(11,43,38,0.8)",
                       transition: "background 120ms",
                     }}
                     onClick={() => onNavigate("new-review")}
-                    onMouseEnter={e => (e.currentTarget.style.background = "#0F1A1F")}
+                    onMouseEnter={e => (e.currentTarget.style.background = "rgba(11,43,38,0.55)")}
                     onMouseLeave={e => (e.currentTarget.style.background = "")}
                   >
                     <div className="min-w-0 pr-3">
-                      <p className="text-[13.5px] font-medium text-[#C8D8DF] truncate">{row.title}</p>
-                      <p className="text-[11px] text-[#566B76] mt-0.5">{row.counterparty}</p>
+                      <p className="text-[13px] font-medium truncate" style={{ color: "var(--cc-text-muted)" }}>{row.title}</p>
+                      <p className="text-[11px] mt-0.5" style={{ color: "var(--cc-text-soft)" }}>{row.counterparty}</p>
                     </div>
-                    <span className="text-[11px] text-[#8FA3AE] truncate">{row.type.replace("Customer Order Form", "Order Form").replace("Mutual NDA", "NDA")}</span>
+                    <span className="text-[11px] truncate" style={{ color: "var(--cc-text-soft)" }}>{row.type.replace("Customer Order Form", "Order Form").replace("Mutual NDA", "NDA")}</span>
                     <span><RiskBadge level={row.risk} size="sm" /></span>
-                    <span className="text-[11px] text-[#8FA3AE] truncate pr-2">{row.route.replace("Batch for spot-check or quick legal review", "Batch spot-check").replace("Lawyer quick review required.", "Quick review").replace("Full legal review required. Do not proceed without legal sign-off.", "Full review")}</span>
-                    <span className="text-[11px] text-[#8FA3AE] truncate pr-2">{row.issue}</span>
-                    <span className="text-[11px] text-[#16C784]">{row.saved}</span>
+                    <span className="text-[11px] truncate pr-2" style={{ color: "var(--cc-text-soft)" }}>{row.route.replace("Batch for spot-check or quick legal review", "Batch spot-check").replace("Lawyer quick review required.", "Quick review").replace("Full legal review required. Do not proceed without legal sign-off.", "Full review")}</span>
+                    <span className="text-[11px] truncate pr-2" style={{ color: "var(--cc-text-soft)" }}>{row.issue}</span>
+                    <span className="text-[11px] font-semibold" style={{ color: "var(--cc-green)" }}>{row.saved}</span>
                     <span><span className={STATUS_STYLE[row.status] ?? "pill pill-neutral"}>{row.status}</span></span>
                     <button
                       className="w-7 h-7 flex items-center justify-center rounded-lg transition-colors"
-                      style={{ background: "#131F25", color: "#8FA3AE" }}
+                      style={{ background: "var(--cc-surface-raised)", color: "var(--cc-text-soft)", border: "1px solid var(--cc-border)" }}
                       onClick={e => { e.stopPropagation(); onNavigate("review-results"); }}
                     >
-                      <ChevronRight size={13} />
+                      <ChevronRight size={12} />
                     </button>
                   </div>
                 ))}
@@ -188,8 +198,8 @@ export default function Dashboard({ contracts, reviews, humanDecisions, onNaviga
                     <span className="text-[12px] text-[#8FA3AE]">{label}</span>
                     <span className="text-[12px] font-semibold" style={{ color }}>{count} · {pct}%</span>
                   </div>
-                  <div className="h-1 rounded-full" style={{ background: "#131F25" }}>
-                    <div className="h-full rounded-full" style={{ width: `${pct}%`, background: color }} />
+                  <div className="h-1 rounded-full" style={{ background: "var(--cc-border)" }}>
+                    <div className="h-full rounded-full" style={{ width: `${pct}%`, background: color, transition: "width 400ms ease" }} />
                   </div>
                 </div>
               );
@@ -205,7 +215,7 @@ export default function Dashboard({ contracts, reviews, humanDecisions, onNaviga
             <div className="space-y-3">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <p className="text-[12px] font-medium text-[#8FA3AE]">Pending escalations</p>
+                  <p className="text-[12px] font-medium" style={{ color: "var(--cc-text-muted)" }}>Pending escalations</p>
                 </div>
                 <span className={escalations > 0 ? "pill pill-red" : "pill pill-neutral"}>
                   {escalations}
@@ -213,15 +223,15 @@ export default function Dashboard({ contracts, reviews, humanDecisions, onNaviga
               </div>
               <div className="divider" />
               <div>
-                <p className="text-[12px] font-medium text-[#8FA3AE] mb-1">Primary risk metric</p>
-                <p className="text-[12px] text-[#F56565]">False negatives</p>
-                <p className="text-[11px] text-[#566B76] mt-0.5">Missing a material issue is the critical failure mode.</p>
+                <p className="text-[12px] font-medium mb-1" style={{ color: "var(--cc-text-muted)" }}>Primary risk metric</p>
+                <p className="text-[12px]" style={{ color: "var(--cc-red)" }}>False negatives</p>
+                <p className="text-[11px] mt-0.5" style={{ color: "var(--cc-text-soft)" }}>Missing a material issue is the critical failure mode.</p>
               </div>
               <div className="divider" />
               <div>
-                <p className="text-[12px] font-medium text-[#8FA3AE] mb-1">Last eval run</p>
-                <p className="text-[12px] text-[#E8EFF2]">87.5% pass rate</p>
-                <p className="text-[11px] text-[#566B76] mt-0.5">8 synthetic test cases · 1 false negative</p>
+                <p className="text-[12px] font-medium mb-1" style={{ color: "var(--cc-text-muted)" }}>Last eval run</p>
+                <p className="text-[12px]" style={{ color: "var(--cc-text)" }}>87.5% pass rate</p>
+                <p className="text-[11px] mt-0.5" style={{ color: "var(--cc-text-soft)" }}>8 synthetic test cases · 1 false negative</p>
               </div>
             </div>
           </div>
@@ -231,16 +241,16 @@ export default function Dashboard({ contracts, reviews, humanDecisions, onNaviga
             <h3 className="card-title mb-4">Time hypothesis</h3>
             <div className="space-y-2.5">
               <div className="flex items-center justify-between">
-                <span className="text-[12px] text-[#8FA3AE]">First-pass review</span>
-                <span className="text-[12px] font-semibold text-[#E8EFF2]">25 → 8 min</span>
+                <span className="text-[12px]" style={{ color: "var(--cc-text-muted)" }}>First-pass review</span>
+                <span className="text-[12px] font-semibold" style={{ color: "var(--cc-text)" }}>25 → 8 min</span>
               </div>
               {[
-                { label: "Green", sub: "Batch spot-check", color: "#16C784" },
-                { label: "Amber", sub: "Quick lawyer review", color: "#F5A623" },
-                { label: "Red",   sub: "Full legal review", color: "#F56565" },
+                { label: "Green", sub: "Batch spot-check",    color: "var(--cc-green)" },
+                { label: "Amber", sub: "Quick lawyer review", color: "var(--cc-amber)" },
+                { label: "Red",   sub: "Full legal review",   color: "var(--cc-red)"   },
               ].map(({ label, sub, color }) => (
                 <div key={label} className="flex items-center justify-between">
-                  <span className="text-[11px] text-[#566B76]">{sub}</span>
+                  <span className="text-[11px]" style={{ color: "var(--cc-text-soft)" }}>{sub}</span>
                   <span className="text-[11px] font-semibold" style={{ color }}>{label}</span>
                 </div>
               ))}

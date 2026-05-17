@@ -121,7 +121,7 @@ export default function Playbook({ rules, onAdd, onUpdate, onDelete }: PlaybookP
   const [delId, setDelId]  = useState<string | null>(null);
 
   return (
-    <div className="w-full max-w-[1100px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="w-full px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex items-start justify-between mb-6 gap-4">
         <div>
           <h1 className="page-title mb-1">Playbook</h1>
