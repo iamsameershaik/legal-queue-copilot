@@ -7,6 +7,7 @@ import { Contract, Review, Finding, SuggestedRedline, HumanDecision, DecisionTyp
 import { RiskBadge, SeverityBadge } from "../components/RiskBadge";
 import BrandMark from "../components/BrandMark";
 import { Page } from "../components/Layout";
+import { CitationPanel } from "../components/CitationPanel";
 
 interface ReviewResultsProps {
   contract: Contract | null;
@@ -114,6 +115,14 @@ function FindingCard({ finding, reviewId, onDecision, existingDecision }: {
             </div>
           </div>
 
+          <CitationPanel
+            citations={finding.citations}
+            requiresLegalReference={finding.requiresLegalReference}
+            legalReferenceStatus={finding.legalReferenceStatus}
+            authorityStatus={finding.authorityStatus}
+            provenance={finding.provenance}
+          />
+
           {/* Decision row */}
           {!decided ? (
             <div className="flex flex-wrap items-center justify-between gap-2" style={{ borderTop: "1px solid #131F25", paddingTop: "12px" }}>
@@ -171,6 +180,9 @@ function RedlineCard({ redline }: { redline: SuggestedRedline }) {
       <div className="px-4 pb-3">
         <p className="text-[11px] text-[#566B76] leading-relaxed">{redline.rationale}</p>
         <p className="text-[11px] text-[#F5A623] mt-1.5 font-medium">Human review required before sending externally.</p>
+        {redline.citations && redline.citations.length > 0 && (
+          <CitationPanel citations={redline.citations} />
+        )}
       </div>
     </div>
   );
@@ -267,11 +279,15 @@ function RightSidebar({ review, contract }: { review: Review; contract: Contract
       </div>
 
       <div
-        className="rounded-2xl p-4"
+        className="rounded-2xl p-4 space-y-2.5"
         style={{ background: "#0F1A1F", border: "1px solid #1E2D35" }}
       >
+        <p className="text-[11px] font-semibold text-[#566B76] uppercase tracking-wider">Evidence layer — prototype</p>
         <p className="text-[11px] text-[#364F5A] leading-relaxed">
-          Every recommendation should be reviewed against the contract text and legal playbook. This prototype is not legal advice.
+          Citations are sourced deterministically from contract text and the legal playbook. External legal references are structurally supported but not yet curated — shown as <span className="text-amber-600/80">authority not added</span>.
+        </p>
+        <p className="text-[11px] text-[#364F5A] leading-relaxed">
+          Every recommendation should be verified against the full contract and playbook. This prototype is not legal advice.
         </p>
       </div>
     </div>

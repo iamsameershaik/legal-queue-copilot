@@ -3,6 +3,61 @@ export type Urgency = "Low" | "Medium" | "High";
 export type ContractStatus = "Draft" | "Reviewed" | "Escalated" | "Approved";
 export type RiskLevel = "Green" | "Amber" | "Red";
 export type Severity = "Low" | "Medium" | "High";
+
+// ─── Evidence & Authority types ────────────────────────────────────────────
+
+export type CitationSourceType =
+  | "contract"
+  | "playbook"
+  | "legal-reference"
+  | "system";
+
+export type LegalReferenceStatus =
+  | "not-applicable"
+  | "not-added"
+  | "curated"
+  | "llm-suggested";
+
+export type EvidenceStrength =
+  | "direct"
+  | "inferred"
+  | "missing"
+  | "ambiguous";
+
+export type AuthorityStatus =
+  | "contract-grounded"
+  | "playbook-grounded"
+  | "external-authority-required"
+  | "external-authority-not-added"
+  | "external-authority-curated";
+
+export interface TextRange {
+  start: number;
+  end: number;
+}
+
+export interface ReviewCitation {
+  id: string;
+  sourceType: CitationSourceType;
+  label: string;
+  title: string;
+  excerpt: string;
+  location?: string;
+  url?: string;
+  confidence?: number;
+  evidenceStrength?: EvidenceStrength;
+  textRange?: TextRange;
+  metadata?: Record<string, string | number | boolean>;
+}
+
+export interface FindingProvenance {
+  detector: "deterministic-rule-engine";
+  ruleId: string;
+  ruleName: string;
+  matchedSignals: string[];
+  detectionType: "presence" | "absence" | "pattern" | "threshold" | "fallback";
+  textRange?: TextRange;
+}
 export type DecisionType = "Accepted" | "Edited" | "Rejected" | "Escalated";
 export type PassFail = "Pass" | "Fail" | "Partial";
 
@@ -29,6 +84,11 @@ export interface Finding {
   rationale: string;
   recommendation: string;
   confidenceScore: number;
+  citations?: ReviewCitation[];
+  provenance?: FindingProvenance;
+  requiresLegalReference?: boolean;
+  legalReferenceStatus?: LegalReferenceStatus;
+  authorityStatus?: AuthorityStatus;
 }
 
 export interface SuggestedRedline {
@@ -38,6 +98,7 @@ export interface SuggestedRedline {
   suggestedText: string;
   rationale: string;
   severity: Severity;
+  citations?: ReviewCitation[];
 }
 
 export interface Review {
