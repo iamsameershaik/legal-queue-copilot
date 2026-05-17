@@ -240,7 +240,7 @@ export default function Layout({ currentPage, onNavigate, children, reviewResult
           onClick={() => setCollapsed(c => !c)}
           title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          className="absolute bottom-[92px] flex items-center justify-center rounded-lg"
+          className="absolute bottom-[90px] flex items-center justify-center rounded-lg"
           style={{
             right: "50%",
             transform: "translateX(50%)",
