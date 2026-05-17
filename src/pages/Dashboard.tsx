@@ -1,4 +1,4 @@
-import { FilePlus, ChevronRight, FileCheck } from "lucide-react";
+import { FilePlus, ChevronRight, FileCheck, Play } from "lucide-react";
 import { Contract, Review, HumanDecision } from "../types";
 import { RiskBadge } from "../components/RiskBadge";
 import { Page } from "../components/Layout";
@@ -256,6 +256,16 @@ export default function Dashboard({ contracts, reviews, humanDecisions: _humanDe
           </div>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0 sm:pt-1 flex-wrap">
+          <a
+            href="https://drive.google.com/file/d/1glA6a2GmQRi32N1jdMaqJXCDnUl7dNwb/view"
+            target="_blank"
+            rel="noreferrer"
+            className="btn-secondary"
+            style={{ textDecoration: "none" }}
+            title="Original v1 walkthrough"
+          >
+            <Play size={13} /> Watch walkthrough
+          </a>
           <button className="btn-secondary" onClick={onLoadDemo}>
             <FileCheck size={13} /> Load demo queue
           </button>

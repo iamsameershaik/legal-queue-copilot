@@ -1,7 +1,7 @@
 import { useState } from "react";
 import {
   LayoutDashboard, FilePlus, FileText, BookOpen,
-  FlaskConical, ClipboardList, Menu, X, ChevronsLeft, ChevronsRight,
+  FlaskConical, ClipboardList, Code2, Menu, X, ChevronsLeft, ChevronsRight,
   type LucideIcon,
 } from "lucide-react";
 import BrandMark from "./BrandMark";
@@ -12,7 +12,8 @@ export type Page =
   | "review-results"
   | "playbook"
   | "evaluation"
-  | "activity-log";
+  | "activity-log"
+  | "builder-notes";
 
 interface LayoutProps {
   currentPage: Page;
@@ -28,6 +29,7 @@ const NAV_ITEMS: { id: Page; label: string; icon: LucideIcon }[] = [
   { id: "playbook",       label: "Playbook",       icon: BookOpen        },
   { id: "evaluation",     label: "Evaluation",     icon: FlaskConical    },
   { id: "activity-log",   label: "Handover",       icon: ClipboardList   },
+  { id: "builder-notes",  label: "Builder Notes",  icon: Code2           },
 ];
 
 /* Sidebar content — single tree used for both desktop and mobile drawer.

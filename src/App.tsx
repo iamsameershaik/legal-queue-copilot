@@ -6,6 +6,7 @@ import ReviewResults from "./pages/ReviewResults";
 import Playbook from "./pages/Playbook";
 import Evaluation from "./pages/Evaluation";
 import ActivityLog from "./pages/ActivityLog";
+import BuilderNotes from "./pages/BuilderNotes";
 import { Contract, Review, PlaybookRule, HumanDecision } from "./types";
 import { runContractReview } from "./services/reviewEngine";
 import { initialStore, saveStore, Store } from "./lib/store";
@@ -255,6 +256,8 @@ export default function App() {
             playbookRules={store.playbookRules}
           />
         );
+      case "builder-notes":
+        return <BuilderNotes />;
     }
   }
 
